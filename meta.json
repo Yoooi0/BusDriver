@@ -1,0 +1,13 @@
+{ 
+   "licenseType" : "MIT", 
+   "creatorName" : "Yoooi", 
+   "packageName" : "BusDriver", 
+   "includeVersionsInReferences" : "true", 
+   "description" : "", 
+   "credits" : "", 
+   "instructions" : "", 
+   "promotionalLink" : "", 
+   "programVersion" : "1.19.0.5", 
+   "contentList" : [], 
+   "dependencies" : {}
+}
