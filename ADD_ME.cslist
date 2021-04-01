@@ -7,8 +7,8 @@ src\MotionTarget\AbstractMotionTarget.cs
 src\MotionTarget\ForceMotionTarget.cs
 src\MotionTarget\IMotionTarget.cs
 src\MotionTarget\PhysicsLinkMotionTarget.cs
-src\Plugin.cs
 src\Plugin.UI.cs
+src\Plugin.cs
 src\UI\Control\UIHorizontalGroup.cs
 src\UI\Control\UIInputBox.cs
 src\UI\IUIBuilder.cs
