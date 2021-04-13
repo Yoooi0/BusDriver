@@ -48,6 +48,9 @@ namespace BusDriver.MotionTarget
 
         public override void Apply(Vector3 offset, Quaternion rotation)
         {
+            if (_target == null)
+                return;
+
             var sourceRotation = _originRotation * rotation;
             var sourcePosition = _originPosition + _originRotation * offset;
 
