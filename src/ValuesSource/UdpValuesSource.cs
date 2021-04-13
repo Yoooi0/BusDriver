@@ -42,8 +42,11 @@ namespace BusDriver.ValuesSource
 
             try
             {
-                _server = new UdpClient(_port);
+                _server = new UdpClient();
+                _server.ExclusiveAddressUse = false;
                 _server.Client.Blocking = false;
+                _server.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
+                _server.Client.Bind(new IPEndPoint(IPAddress.Loopback, _port));
             }
             catch(Exception e)
             {
