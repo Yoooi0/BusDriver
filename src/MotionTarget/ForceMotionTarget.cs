@@ -52,6 +52,15 @@ namespace BusDriver.MotionTarget
             DebugDraw.DrawTransform(sourcePosition, sourceRotation.GetUp(), sourceRotation.GetRight(), sourceRotation.GetForward(), 3);
         }
 
+        public override void OnSceneChanged()
+        {
+            base.AtomChooserCallback(Atom?.name);
+            TargetChooserCallback(_target?.name);
+
+            if (_target == null)
+                AtomChooserCallback(null);
+        }
+
         private void ApplyTorque(Vector3 from, Vector3 to)
         {
             var axis = Vector3.Cross(from.normalized, to.normalized);

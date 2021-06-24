@@ -133,7 +133,7 @@ namespace BusDriver
 
         protected void OnSceneLoaded()
         {
-            MotionTargetChooserCallback(null);
+            _motionTarget?.OnSceneChanged();
         }
 
         protected void OnDestroy()

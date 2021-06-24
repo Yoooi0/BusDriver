@@ -61,6 +61,15 @@ namespace BusDriver.MotionTarget
             DebugDraw.DrawTransform(sourcePosition, sourceRotation.GetUp(), sourceRotation.GetRight(), sourceRotation.GetForward(), 3);
         }
 
+        public override void OnSceneChanged()
+        {
+            base.AtomChooserCallback(Atom?.name);
+            TargetChooserCallback(_target?.name);
+
+            if (_target == null)
+                AtomChooserCallback(null);
+        }
+
         protected override void AtomChooserCallback(string s)
         {
             base.AtomChooserCallback(s);

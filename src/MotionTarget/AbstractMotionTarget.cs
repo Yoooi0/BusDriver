@@ -11,6 +11,7 @@ namespace BusDriver.MotionTarget
         private JSONStorableStringChooser AtomChooser;
 
         public abstract void Apply(Vector3 offset, Quaternion rotation);
+        public abstract void OnSceneChanged();
 
         protected virtual void CreateCustomUI(IUIBuilder builder) { }
 

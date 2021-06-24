@@ -7,6 +7,7 @@ namespace BusDriver.MotionTarget
     public interface IMotionTarget : IUIProvider
     {
         void Apply(Vector3 offset, Quaternion rotation);
+        void OnSceneChanged();
         void Dispose();
     }
 }
