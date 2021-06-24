@@ -139,6 +139,7 @@ namespace BusDriver
         protected void OnDestroy()
         {
             DebugDraw.Clear();
+            SuperController.singleton.onSceneLoadedHandlers -= OnSceneLoaded;
 
             _valuesSource?.Dispose();
             _motionTarget?.Dispose();
