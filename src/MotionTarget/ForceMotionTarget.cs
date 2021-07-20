@@ -1,4 +1,4 @@
-using DebugUtils;
+﻿using DebugUtils;
 using Leap.Unity;
 using Leap.Unity.Infix;
 using System.Collections.Generic;
@@ -12,8 +12,8 @@ namespace BusDriver.MotionTarget
     public class ForceMotionTarget : AbstractMotionTarget
     {
         private Rigidbody _target;
-        private Vector3 _originPosition;
-        private Quaternion _originRotation;
+        private Vector3? _originPosition;
+        private Quaternion? _originRotation;
 
         private JSONStorableStringChooser TargetChooser;
         private UIDynamicButton CaptureOriginButton;
@@ -36,11 +36,11 @@ namespace BusDriver.MotionTarget
 
         public override void Apply(Vector3 offset, Quaternion rotation)
         {
-            if (_target == null)
+            if (_target == null || _originPosition == null || _originRotation == null)
                 return;
 
-            var sourceRotation = _originRotation * rotation;
-            var sourcePosition = _originPosition + _originRotation * offset;
+            var sourceRotation = _originRotation.Value * rotation;
+            var sourcePosition = _originPosition.Value + _originRotation.Value * offset;
 
             _target.AddForce((sourcePosition - _target.position) * _target.mass / Time.fixedDeltaTime, ForceMode.Impulse);
 
@@ -81,11 +81,8 @@ namespace BusDriver.MotionTarget
 
         private void CaptureOriginCallback()
         {
-            if (_target == null)
-                return;
-
-            _originPosition = _target.transform.position;
-            _originRotation = _target.transform.rotation;
+            _originPosition = _target?.transform?.position;
+            _originRotation = _target?.transform?.rotation;
         }
 
         protected override void AtomChooserCallback(string s)
