@@ -1,4 +1,4 @@
-﻿using DebugUtils;
+using DebugUtils;
 using Leap.Unity;
 using Leap.Unity.Infix;
 using System.Collections.Generic;
@@ -52,13 +52,20 @@ namespace BusDriver.MotionTarget
             DebugDraw.DrawTransform(sourcePosition, sourceRotation.GetUp(), sourceRotation.GetRight(), sourceRotation.GetForward(), 3);
         }
 
+        private string lastSceneAtomUid;
+        private string lastSceneTargetName;
+        public override void OnSceneChanging()
+        {
+            lastSceneAtomUid = Atom?.uid;
+            lastSceneTargetName = _target?.name;
+
+            AtomChooserCallback(null);
+        }
+
         public override void OnSceneChanged()
         {
-            base.AtomChooserCallback(Atom?.name);
-            TargetChooserCallback(_target?.name);
-
-            if (_target == null)
-                AtomChooserCallback(null);
+            base.AtomChooserCallback(lastSceneAtomUid);
+            FindTargets(lastSceneTargetName);
         }
 
         private void ApplyTorque(Vector3 from, Vector3 to)
@@ -87,7 +94,7 @@ namespace BusDriver.MotionTarget
             FindTargets();
         }
 
-        private void FindTargets()
+        private void FindTargets(string defaultTarget = "None")
         {
             if (Atom == null)
             {
@@ -97,7 +104,6 @@ namespace BusDriver.MotionTarget
             }
 
             var targets = Atom.forceReceivers.Select(c => c.name).ToList();
-            var defaultTarget = "None";
             targets.Insert(0, "None");
 
             TargetChooser.choices = targets;

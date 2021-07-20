@@ -7,6 +7,7 @@ using System.Text;
 using BusDriver.ValuesSource;
 using BusDriver.MotionTarget;
 using UnityEngine;
+using System.Collections;
 
 namespace BusDriver
 {
@@ -33,8 +34,6 @@ namespace BusDriver
                     var defaultPath = SuperController.singleton.GetFilesAtPath(PluginDir, "*.json")?.FirstOrDefault(s => s.EndsWith("default.json"));
                     if (defaultPath != null)
                         ConfigManager.LoadConfig(defaultPath, this);
-
-                    SuperController.singleton.onSceneLoadedHandlers += OnSceneLoaded;
                 } catch { }
             }
             catch (Exception e)
@@ -84,10 +83,18 @@ namespace BusDriver
             _physicsIteration = 0;
         }
 
+        private bool _isLoading;
         protected void FixedUpdate()
         {
-            if (!_initialized || SuperController.singleton.isLoading)
+            if (!_initialized)
                 return;
+
+            var isLoading = SuperController.singleton.isLoading;
+            if (!_isLoading && isLoading)
+                OnSceneChanging();
+            else if (_isLoading && !isLoading)
+                OnSceneChanged();
+            _isLoading = isLoading;
 
             if (_physicsIteration == 0)
                 DebugDraw.Clear();
@@ -131,7 +138,12 @@ namespace BusDriver
             _physicsIteration++;
         }
 
-        protected void OnSceneLoaded()
+        protected void OnSceneChanging()
+        {
+            _motionTarget?.OnSceneChanging();
+        }
+
+        protected void OnSceneChanged()
         {
             _motionTarget?.OnSceneChanged();
         }
@@ -139,7 +151,6 @@ namespace BusDriver
         protected void OnDestroy()
         {
             DebugDraw.Clear();
-            SuperController.singleton.onSceneLoadedHandlers -= OnSceneLoaded;
 
             _valuesSource?.Dispose();
             _motionTarget?.Dispose();
