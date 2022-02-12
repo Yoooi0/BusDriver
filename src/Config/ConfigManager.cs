@@ -17,7 +17,8 @@ namespace BusDriver.Config
             if (parts.Length == 1)
                 path += ".json";
 
-            if (path?.EndsWith(".json") == false || parts.Last() == string.Empty) {
+            if (path?.EndsWith(".json") == false || parts.Last() == string.Empty)
+            {
                 SuperController.LogError($"Invalid config file path! \"{path}\"");
                 return false;
             }
@@ -39,6 +40,15 @@ namespace BusDriver.Config
             Controller.SaveJSON(config, path, () => SuperController.LogMessage($"Saved config! \"{path}\""), null, null);
         }
 
+        public static JSONClass GetJSON(IConfigProvider provider)
+        {
+            var config = new JSONClass();
+            provider.StoreConfig(config);
+
+            SuperController.LogMessage("Saved config to json!");
+            return config;
+        }
+
         public static void LoadConfig(string path, IConfigProvider provider)
         {
             if (!CheckPath(ref path))
@@ -52,6 +62,12 @@ namespace BusDriver.Config
             provider.RestoreConfig(config);
 
             SuperController.LogMessage($"Loaded config! \"{path}\"");
+        }
+
+        public static void RestoreFromJSON(JSONClass config, IConfigProvider provider)
+        {
+            provider.RestoreConfig(config);
+            SuperController.LogMessage("Loaded config from json!");
         }
 
         private static void OpenDialog(string defaultPath, string filter, bool textEntry, uFileBrowser.FileBrowserCallback callback)
