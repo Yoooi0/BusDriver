@@ -96,8 +96,6 @@
     <Compile Include="src\MotionTarget\AbstractMotionTarget.cs" />
     <Compile Include="src\MotionTarget\IMotionTarget.cs" />
     <Compile Include="src\MotionTarget\ForceMotionTarget.cs" />
-    <Compile Include="src\ValuesSource\Parser\IValuesParser.cs" />
-    <Compile Include="src\ValuesSource\Parser\TCodeParser.cs" />
     <Compile Include="src\MotionTarget\PhysicsLinkMotionTarget.cs" />
     <Compile Include="src\UI\Control\UIInputBox.cs" />
     <Compile Include="src\UI\Control\UIHorizontalGroup.cs" />
