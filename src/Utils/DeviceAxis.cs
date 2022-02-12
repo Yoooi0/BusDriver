@@ -46,12 +46,12 @@ namespace BusDriver.Utils
 
         public static bool TryParse(string axisName, out int axis)
         {
-            if (string.CompareOrdinal(axisName, "L0") == 0) axis = L0;
-            else if (string.CompareOrdinal(axisName, "L1") == 0) axis = L1;
-            else if (string.CompareOrdinal(axisName, "L2") == 0) axis = L2;
-            else if (string.CompareOrdinal(axisName, "R0") == 0) axis = R0;
-            else if (string.CompareOrdinal(axisName, "R1") == 0) axis = R1;
-            else if (string.CompareOrdinal(axisName, "R2") == 0) axis = R2;
+            if (string.Equals(axisName, "L0", System.StringComparison.OrdinalIgnoreCase)) axis = L0;
+            else if (string.Equals(axisName, "L1", System.StringComparison.OrdinalIgnoreCase)) axis = L1;
+            else if (string.Equals(axisName, "L2", System.StringComparison.OrdinalIgnoreCase)) axis = L2;
+            else if (string.Equals(axisName, "R0", System.StringComparison.OrdinalIgnoreCase)) axis = R0;
+            else if (string.Equals(axisName, "R1", System.StringComparison.OrdinalIgnoreCase)) axis = R1;
+            else if (string.Equals(axisName, "R2", System.StringComparison.OrdinalIgnoreCase)) axis = R2;
             else
             {
                 axis = -1;

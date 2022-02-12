@@ -21,6 +21,4 @@ src\Utils\Extensions.cs
 src\Utils\StreamReader.cs
 src\ValuesSource\AbstractValuesSource.cs
 src\ValuesSource\IValuesSource.cs
-src\ValuesSource\Parser\IValuesParser.cs
-src\ValuesSource\Parser\TCodeParser.cs
 src\ValuesSource\UdpValuesSource.cs

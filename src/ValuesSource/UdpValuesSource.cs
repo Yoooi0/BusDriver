@@ -1,21 +1,25 @@
 ﻿using System;
-using System.Linq;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
-using System.Text.RegularExpressions;
-using BusDriver.Utils;
 using BusDriver.UI;
-using UnityEngine;
 
 namespace BusDriver.ValuesSource
 {
     public class UdpValuesSource : AbstractValuesSource
     {
+        private readonly byte[] _readBuffer;
         private UdpClient _server;
         private int _port = 8889;
+        private EndPoint _receiveEndpoint;
 
         private JSONStorableString PortInputBox;
+
+        public UdpValuesSource()
+        {
+            _readBuffer = new byte[1024];
+            _receiveEndpoint = new IPEndPoint(IPAddress.Any, 0);
+        }
 
         protected override void CreateCustomUI(IUIBuilder builder)
         {
@@ -67,19 +71,16 @@ namespace BusDriver.ValuesSource
             SuperController.LogMessage("Upd stopped");
         }
 
-        private byte[] ReceiveLatest()
+        private string ReceiveLatest()
         {
-            var endpoint = new IPEndPoint(IPAddress.Any, 0);
-            var bytes = default(byte[]);
+            var received = -1;
             while (true)
             {
                 try
                 {
-                    var received = _server.Receive(ref endpoint);
-                    if (received == null)
+                    received = _server.Client.ReceiveFrom(_readBuffer, ref _receiveEndpoint);
+                    if (received <= 0)
                         break;
-
-                    bytes = received;
                 }
                 catch (SocketException e)
                 {
@@ -88,7 +89,10 @@ namespace BusDriver.ValuesSource
                 }
             }
 
-            return bytes;
+            if(received <= 0)
+                return null;
+
+            return Encoding.ASCII.GetString(_readBuffer, 0, received);
         }
 
         public override void Update()
@@ -98,12 +102,11 @@ namespace BusDriver.ValuesSource
 
             try
             {
-                var bytes = ReceiveLatest();
-                if (bytes == null)
+                var data = ReceiveLatest();
+                if (data == null)
                     return;
 
-                var line = Encoding.ASCII.GetString(bytes);
-                Parser?.Parse(line, Values);
+                UpdateValues(data);
             }
             catch (SocketException e)
             {
