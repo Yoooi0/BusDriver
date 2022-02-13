@@ -39,7 +39,6 @@ namespace BusDriver.MotionTarget
         public override void DestroyUI(IUIBuilder builder)
         {
             base.DestroyUI(builder);
-
             builder.Destroy(TargetChooser);
         }
 
@@ -139,8 +138,11 @@ namespace BusDriver.MotionTarget
             _target = Atom?.freeControllers?.FirstOrDefault(c => string.Equals(s, c.name, StringComparison.OrdinalIgnoreCase));
             ResetOriginCallback();
 
-            _source.transform.position = _target.transform.position;
-            _source.transform.rotation = _target.transform.rotation;
+            if (_target != null)
+            {
+                _source.transform.position = _target.transform.position;
+                _source.transform.rotation = _target.transform.rotation;
+            }
 
             CaptureCurrentTarget();
 

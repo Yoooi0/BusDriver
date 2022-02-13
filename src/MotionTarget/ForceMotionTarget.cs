@@ -15,7 +15,6 @@ namespace BusDriver.MotionTarget
         private Rigidbody _target;
 
         private JSONStorableStringChooser TargetChooser;
-        private UIDynamicButton CaptureOriginButton;
 
         public override event EventHandler<TargetChangedEventArgs> TargetChanged;
 
@@ -28,9 +27,7 @@ namespace BusDriver.MotionTarget
         public override void DestroyUI(IUIBuilder builder)
         {
             base.DestroyUI(builder);
-
             builder.Destroy(TargetChooser);
-            builder.Destroy(CaptureOriginButton);
         }
 
         public override void Apply(Transform origin, Vector3 offset, Quaternion rotation)
