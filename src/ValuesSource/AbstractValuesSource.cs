@@ -10,7 +10,7 @@ namespace BusDriver.ValuesSource
 {
     public abstract class AbstractValuesSource : IValuesSource
     {
-        private readonly Regex _regex = new Regex(@"([L|R][0|1|2])(\d+)([I|S])(\d+)?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
+        private readonly Regex _regex = new Regex(@"([L|R][0|1|2])(\d+)(?>([I|S])(\d+))?", RegexOptions.Compiled | RegexOptions.IgnoreCase);
         private readonly Dictionary<int, Transition> _transitions;
         private readonly Dictionary<int, float> _values;
 
@@ -19,7 +19,13 @@ namespace BusDriver.ValuesSource
         protected AbstractValuesSource()
         {
             _values = DeviceAxis.Values.ToDictionary(a => a, a => DeviceAxis.DefaultValue(a));
-            _transitions = DeviceAxis.Values.ToDictionary(a => a, a => new Transition());
+            _transitions = DeviceAxis.Values.ToDictionary(a => a, a => new Transition()
+            {
+                StartValue = DeviceAxis.DefaultValue(a),
+                EndValue = DeviceAxis.DefaultValue(a),
+                StartTime = Time.fixedTime,
+                EndTime = Time.fixedTime
+            });
         }
 
         public abstract void Update();
@@ -39,14 +45,17 @@ namespace BusDriver.ValuesSource
 
         protected void UpdateValues(string data)
         {
-            ParseCommands(data);
-
             foreach (var axis in DeviceAxis.Values)
                 _values[axis] = GetValue(_transitions[axis], Time.fixedTime);
+
+            ParseCommands(data);
         }
 
         private void ParseCommands(string data)
         {
+            if (data == null)
+                return;
+
             var matches = _regex.Matches(data);
             if (matches.Count <= 0)
                 return;
@@ -68,7 +77,7 @@ namespace BusDriver.ValuesSource
                     transition.StartTime = Time.fixedTime;
                     transition.EndValue = value;
 
-                    if (match.Groups.Count == 4)
+                    if (match.Groups.Count == 5)
                     {
                         var modifierName = match.Groups[3].Value.ToUpper();
                         var modifierValue = int.Parse(match.Groups[4].Value) / 1000.0f;

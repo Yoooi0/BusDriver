@@ -103,9 +103,6 @@ namespace BusDriver.ValuesSource
             try
             {
                 var data = ReceiveLatest();
-                if (data == null)
-                    return;
-
                 UpdateValues(data);
             }
             catch (SocketException e)
