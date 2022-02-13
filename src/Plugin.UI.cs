@@ -26,6 +26,11 @@ namespace BusDriver
         private JSONStorableStringChooser ValuesSourceChooser;
         private UIDynamicButton ValuesSourceTitle;
 
+        private UIDynamicButton OriginTitle;
+        private JSONStorableBool AlwaysDrawOriginToggle;
+        private JSONStorableBool DrawOriginBoxToggle;
+        private JSONStorableBool DrawOriginAnglesToggle;
+
         private JSONStorableStringChooser MotionTargetChooser;
         private UIDynamicButton MotionTargetTitle;
 
@@ -85,6 +90,14 @@ namespace BusDriver
 
             ValuesSourceChooser = _valuesSourceGroup.CreatePopup("Plugin:ValuesSource", "Select values source", new List<string> { "None", "Udp" }, "None", ValuesSourceChooserCallback);
 
+            var originVisible = false;
+            var originGroup = new UIGroup(_group);
+            OriginTitle = _group.CreateButton("Origin", () => originGroup.SetVisible(originVisible = !originVisible), new Color(0.3f, 0.3f, 0.3f), Color.white, true);
+            AlwaysDrawOriginToggle = originGroup.CreateToggle("Origin:AlwaysDrawOrigin", "Always draw origin", false, true);
+            DrawOriginBoxToggle = originGroup.CreateToggle("Origin:DrawOriginBox", "Draw origin box", false, true);
+            DrawOriginAnglesToggle = originGroup.CreateToggle("Origin:DrawOriginAngles", "Draw origin angles", false, true);
+            originGroup.SetVisible(false);
+
             _motionTargetGroup = new UIGroup(_group);
             var motionTargetVisible = true;
             MotionTargetTitle = _group.CreateButton("Motion Target", () => _motionTargetGroup.SetVisible(motionTargetVisible = !motionTargetVisible), new Color(0.3f, 0.3f, 0.3f), Color.white, true);
@@ -136,9 +149,14 @@ namespace BusDriver
 
         protected void MotionTargetChooserCallback(string s)
         {
-            _motionTarget?.DestroyUI(_motionTargetGroup);
-            _motionTarget?.Dispose();
-            _motionTarget = null;
+            if (_motionTarget != null)
+            {
+                _motionTarget.TargetChanged -= OnTargetChanged;
+                _motionTarget.DestroyUI(_motionTargetGroup);
+                _motionTarget.Dispose();
+                _motionTarget = null;
+            }
+
 
             if (s == "Physics Link")
                 _motionTarget = new PhysicsLinkMotionTarget();
@@ -151,6 +169,7 @@ namespace BusDriver
             }
 
             MotionTargetChooser.valNoCallback = s;
+            _motionTarget.TargetChanged += OnTargetChanged;
             _motionTarget.CreateUI(_motionTargetGroup);
         }
 

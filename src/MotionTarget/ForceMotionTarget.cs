@@ -6,23 +6,22 @@ using System.Linq;
 using BusDriver.UI;
 using BusDriver.Utils;
 using UnityEngine;
+using System;
 
 namespace BusDriver.MotionTarget
 {
     public class ForceMotionTarget : AbstractMotionTarget
     {
         private Rigidbody _target;
-        private Vector3? _originPosition;
-        private Quaternion? _originRotation;
 
         private JSONStorableStringChooser TargetChooser;
         private UIDynamicButton CaptureOriginButton;
 
+        public override event EventHandler<TargetChangedEventArgs> TargetChanged;
+
         protected override void CreateCustomUI(IUIBuilder builder)
         {
             TargetChooser = builder.CreateScrollablePopup("MotionSource:Force:Target", "Select Target", null, null, TargetChooserCallback, true);
-            CaptureOriginButton = builder.CreateButton("Capture Origin", CaptureOriginCallback, true);
-
             FindAtoms();
         }
 
@@ -34,13 +33,13 @@ namespace BusDriver.MotionTarget
             builder.Destroy(CaptureOriginButton);
         }
 
-        public override void Apply(Vector3 offset, Quaternion rotation)
+        public override void Apply(Transform origin, Vector3 offset, Quaternion rotation)
         {
-            if (_target == null || _originPosition == null || _originRotation == null)
+            if (_target == null || origin == null)
                 return;
 
-            var sourceRotation = _originRotation.Value * rotation;
-            var sourcePosition = _originPosition.Value + _originRotation.Value * offset;
+            var sourceRotation = origin.rotation * rotation;
+            var sourcePosition = origin.position + origin.rotation * offset;
 
             _target.AddForce((sourcePosition - _target.position) * _target.mass / Time.fixedDeltaTime, ForceMode.Impulse);
 
@@ -79,12 +78,6 @@ namespace BusDriver.MotionTarget
             _target.AddTorque(torque, ForceMode.Impulse);
         }
 
-        private void CaptureOriginCallback()
-        {
-            _originPosition = _target?.transform?.position;
-            _originRotation = _target?.transform?.rotation;
-        }
-
         protected override void AtomChooserCallback(string s)
         {
             base.AtomChooserCallback(s);
@@ -109,10 +102,15 @@ namespace BusDriver.MotionTarget
 
         protected void TargetChooserCallback(string s)
         {
-            _target = Atom?.forceReceivers?.FirstOrDefault(c => string.Equals(s, c.name, System.StringComparison.OrdinalIgnoreCase))?.GetComponent<Rigidbody>();
-            CaptureOriginCallback();
-
+            _target = Atom?.forceReceivers?.FirstOrDefault(c => string.Equals(s, c.name, StringComparison.OrdinalIgnoreCase))?.GetComponent<Rigidbody>();
+            ResetOriginCallback();
             TargetChooser.valNoCallback = _target == null ? "None" : s;
+        }
+
+        protected override void ResetOriginCallback()
+        {
+            if (TargetChanged != null)
+                TargetChanged(this, new TargetChangedEventArgs(_target?.transform));
         }
     }
 }

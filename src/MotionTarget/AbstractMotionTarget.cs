@@ -1,4 +1,5 @@
-﻿using System.Linq;
+﻿using System;
+using System.Linq;
 using BusDriver.UI;
 using UnityEngine;
 
@@ -9,8 +10,11 @@ namespace BusDriver.MotionTarget
         protected Atom Atom { get; private set; }
 
         private JSONStorableStringChooser AtomChooser;
+        private UIDynamicButton ResetOriginButton;
 
-        public abstract void Apply(Vector3 offset, Quaternion rotation);
+        public abstract event EventHandler<TargetChangedEventArgs> TargetChanged;
+
+        public abstract void Apply(Transform origin, Vector3 offset, Quaternion rotation);
         public virtual void OnSceneChanged() { }
         public virtual void OnSceneChanging() { }
 
@@ -21,11 +25,14 @@ namespace BusDriver.MotionTarget
             AtomChooser = builder.CreateScrollablePopup("MotionSource:Person", "Select Person", null, null, AtomChooserCallback, true);
 
             CreateCustomUI(builder);
+
+            ResetOriginButton = builder.CreateButton("Reset origin", ResetOriginCallback, true);
         }
 
         public virtual void DestroyUI(IUIBuilder builder)
         {
             builder.Destroy(AtomChooser);
+            builder.Destroy(ResetOriginButton);
         }
 
         protected void FindAtoms()
@@ -45,6 +52,8 @@ namespace BusDriver.MotionTarget
             Atom = SuperController.singleton.GetAtomByUid(s);
             AtomChooser.valNoCallback = Atom == null ? "None" : s;
         }
+
+        protected abstract void ResetOriginCallback();
 
         protected virtual void Dispose(bool disposing) { }
 

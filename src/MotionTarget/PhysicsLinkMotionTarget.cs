@@ -7,19 +7,19 @@ using BusDriver.UI;
 using BusDriver.Utils;
 using UnityEngine;
 using UnityThreading;
+using System;
 
 namespace BusDriver.MotionTarget
 {
     public class PhysicsLinkMotionTarget : AbstractMotionTarget
     {
         private FreeControllerV3 _target;
-        private Vector3 _originPosition;
-        private Quaternion _originRotation;
         private GameObject _source;
         private Rigidbody _sourceRigidBody;
 
         private JSONStorableStringChooser TargetChooser;
-        private UIDynamicButton CaptureOriginButton;
+
+        public override event EventHandler<TargetChangedEventArgs> TargetChanged;
 
         public PhysicsLinkMotionTarget()
         {
@@ -33,8 +33,6 @@ namespace BusDriver.MotionTarget
         protected override void CreateCustomUI(IUIBuilder builder)
         {
             TargetChooser = builder.CreateScrollablePopup("MotionSource:PhysicsLink:Target", "Select Target", null, null, TargetChooserCallback, true);
-            CaptureOriginButton = builder.CreateButton("Capture Origin", CaptureOriginCallback, true);
-
             FindAtoms();
         }
 
@@ -43,16 +41,15 @@ namespace BusDriver.MotionTarget
             base.DestroyUI(builder);
 
             builder.Destroy(TargetChooser);
-            builder.Destroy(CaptureOriginButton);
         }
 
-        public override void Apply(Vector3 offset, Quaternion rotation)
+        public override void Apply(Transform origin, Vector3 offset, Quaternion rotation)
         {
-            if (_target == null)
+            if (_target == null || origin == null)
                 return;
 
-            var sourceRotation = _originRotation * rotation;
-            var sourcePosition = _originPosition + _originRotation * offset;
+            var sourceRotation = origin.rotation * rotation;
+            var sourcePosition = origin.position + origin.rotation * offset;
 
             _sourceRigidBody.MovePosition(sourcePosition);
             _sourceRigidBody.MoveRotation(sourceRotation);
@@ -81,15 +78,6 @@ namespace BusDriver.MotionTarget
         {
             base.AtomChooserCallback(s);
             FindTargets();
-        }
-
-        private void CaptureOriginCallback()
-        {
-            if (_target == null)
-                return;
-
-            _source.transform.position = _originPosition = _target.transform.position;
-            _source.transform.rotation = _originRotation = _target.transform.rotation;
         }
 
         private void FindTargets(string defaultTarget = "None")
@@ -148,11 +136,21 @@ namespace BusDriver.MotionTarget
         {
             ResetCurrentTarget();
 
-            _target = Atom?.freeControllers?.FirstOrDefault(c => string.Equals(s, c.name, System.StringComparison.OrdinalIgnoreCase));
-            CaptureOriginCallback();
+            _target = Atom?.freeControllers?.FirstOrDefault(c => string.Equals(s, c.name, StringComparison.OrdinalIgnoreCase));
+            ResetOriginCallback();
+
+            _source.transform.position = _target.transform.position;
+            _source.transform.rotation = _target.transform.rotation;
+
             CaptureCurrentTarget();
 
             TargetChooser.valNoCallback = _target == null ? "None" : s;
+        }
+
+        protected override void ResetOriginCallback()
+        {
+            if (TargetChanged != null)
+                TargetChanged(this, new TargetChangedEventArgs(_target?.transform));
         }
 
         protected override void Dispose(bool disposing)
