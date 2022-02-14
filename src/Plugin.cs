@@ -229,20 +229,27 @@ namespace BusDriver
             {
                 _valuesSource?.Update();
 
-                if (!SuperController.singleton.freezeAnimation && _valuesSource != null && _motionTarget != null)
+                if (!SuperController.singleton.freezeAnimation && _motionTarget != null)
                 {
-                    var upValue = L0RangeSlider.val *           (_valuesSource.GetValue(DeviceAxis.L0) - DeviceAxis.DefaultValue(DeviceAxis.L0)) * 2;
-                    var forwardValue = L1RangeSlider.val * (_valuesSource.GetValue(DeviceAxis.L1) - DeviceAxis.DefaultValue(DeviceAxis.L1)) * 2;
-                    var rightValue = L2RangeSlider.val *     (_valuesSource.GetValue(DeviceAxis.L2) - DeviceAxis.DefaultValue(DeviceAxis.L2)) * 2;
-                    var yawValue = R0RangeSlider.val *         (_valuesSource.GetValue(DeviceAxis.R0) - DeviceAxis.DefaultValue(DeviceAxis.R0)) * 2;
-                    var rollValue = R1RangeSlider.val *       (_valuesSource.GetValue(DeviceAxis.R1) - DeviceAxis.DefaultValue(DeviceAxis.R1)) * 2;
-                    var pitchValue = R2RangeSlider.val *     (_valuesSource.GetValue(DeviceAxis.R2) - DeviceAxis.DefaultValue(DeviceAxis.R2)) * 2;
+                    if (_valuesSource != null)
+                    {
+                        var upValue = L0RangeSlider.val * (_valuesSource.GetValue(DeviceAxis.L0) - DeviceAxis.DefaultValue(DeviceAxis.L0)) * 2;
+                        var forwardValue = L1RangeSlider.val * (_valuesSource.GetValue(DeviceAxis.L1) - DeviceAxis.DefaultValue(DeviceAxis.L1)) * 2;
+                        var rightValue = L2RangeSlider.val * (_valuesSource.GetValue(DeviceAxis.L2) - DeviceAxis.DefaultValue(DeviceAxis.L2)) * 2;
+                        var yawValue = R0RangeSlider.val * (_valuesSource.GetValue(DeviceAxis.R0) - DeviceAxis.DefaultValue(DeviceAxis.R0)) * 2;
+                        var rollValue = R1RangeSlider.val * (_valuesSource.GetValue(DeviceAxis.R1) - DeviceAxis.DefaultValue(DeviceAxis.R1)) * 2;
+                        var pitchValue = R2RangeSlider.val * (_valuesSource.GetValue(DeviceAxis.R2) - DeviceAxis.DefaultValue(DeviceAxis.R2)) * 2;
 
-                    var coordinatesRotation = Quaternion.FromToRotation(Vector3.up, GetL0Direction());
-                    var rotation = Quaternion.Euler(coordinatesRotation * new Vector3(pitchValue, yawValue, rollValue));
-                    var offset = coordinatesRotation * new Vector3(rightValue, upValue, forwardValue);
+                        var coordinatesRotation = Quaternion.FromToRotation(Vector3.up, GetL0Direction());
+                        var rotation = Quaternion.Euler(coordinatesRotation * new Vector3(pitchValue, yawValue, rollValue));
+                        var offset = coordinatesRotation * new Vector3(rightValue, upValue, forwardValue);
 
-                    _motionTarget?.Apply(_originController.transform, offset, rotation);
+                        _motionTarget.Apply(_originController.transform, offset, rotation);
+                    }
+                    else
+                    {
+                        _motionTarget.Apply(_originController.transform, Vector3.zero, Quaternion.identity);
+                    }
                 }
             }
             catch (Exception e)
