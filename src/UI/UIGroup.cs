@@ -144,9 +144,28 @@ namespace BusDriver.UI
 
         public void RestoreConfig(JSONNode config)
         {
-            foreach (var s in _objects.OfType<JSONStorableParam>().ToList())
-                if (!_storableBlacklist.Contains(s.name))
+            var toRestore = default(List<JSONStorableParam>);
+            var restored = new List<JSONStorableParam>();
+
+            var tryCount = 0;
+            do
+            {
+                toRestore = _objects.OfType<JSONStorableParam>()
+                                    .Except(restored)
+                                    .Where(s => !_storableBlacklist.Contains(s.name))
+                                    .ToList();
+
+                foreach (var s in toRestore)
+                {
                     config.Restore(s);
+                    restored.Add(s);
+                }
+
+                if (toRestore.Count == 0)
+                    tryCount++;
+                else
+                    tryCount = 0;
+            } while (tryCount < 2);
         }
     }
 }

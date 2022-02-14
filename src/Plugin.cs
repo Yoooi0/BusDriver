@@ -188,16 +188,18 @@ namespace BusDriver
             if (!_initialized || SuperController.singleton.isLoading)
                 return;
 
-            _originDrawer.Clear();
-            if (_originController.selected || AlwaysDrawOriginToggle.val)
+            if (_originController != null && (_originController.selected || AlwaysDrawOriginToggle.val))
             {
+                _originDrawer.Clear();
+
                 if (DrawOriginBoxToggle.val)
                     DrawOriginBox();
                 if (DrawOriginAnglesToggle.val)
                     DrawOriginAngles();
+
+                _originDrawer.Draw(_originMaterial);
             }
 
-            _originDrawer.Draw(_originMaterial);
 
             _valuesSourceReportBuilder.Length = 0;
             _valuesSourceReportBuilder.Append("L0\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.L0) ?? float.NaN).AppendLine()
@@ -249,11 +251,11 @@ namespace BusDriver
                         var rotation = Quaternion.Euler(coordinatesRotation * new Vector3(pitchValue, yawValue, rollValue));
                         var offset = coordinatesRotation * new Vector3(rightValue, upValue, forwardValue);
 
-                        _motionTarget.Apply(_originController.transform, offset, rotation);
+                        _motionTarget.Apply(_originController?.transform, offset, rotation);
                     }
                     else
                     {
-                        _motionTarget.Apply(_originController.transform, Vector3.zero, Quaternion.identity);
+                        _motionTarget.Apply(_originController?.transform, Vector3.zero, Quaternion.identity);
                     }
                 }
             }
@@ -281,7 +283,7 @@ namespace BusDriver
 
         private void OnTargetChanged(object sender, TargetChangedEventArgs e)
         {
-            if (e.Transform == null)
+            if (_originController == null || e.Transform == null)
                 return;
 
             _originController.transform.position = e.Transform.position;
