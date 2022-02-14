@@ -87,6 +87,7 @@ namespace BusDriver
             ValuesSourceTitle = _group.CreateButton("Values Source", () => _valuesSourceGroup.SetVisible(valuesSourceVisible = !valuesSourceVisible), new Color(0.3f, 0.3f, 0.3f), Color.white);
             ValuesSourceReportText = _valuesSourceGroup.CreateTextField("Values Report", "", 230);
             ValuesSourceReportText.text.font = Font.CreateDynamicFontFromOSFont("Consolas", 14);
+            _group.BlacklistStorable("Values Report");
 
             ValuesSourceChooser = _valuesSourceGroup.CreatePopup("Plugin:ValuesSource", "Select values source", new List<string> { "None", "Udp" }, "None", ValuesSourceChooserCallback);
 
