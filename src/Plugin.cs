@@ -105,8 +105,8 @@ namespace BusDriver
         {
             var t = _originController.transform;
             var camera = Camera.main.transform.position;
-            var extents = new Vector3(RightRangeSlider.val, UpRangeSlider.val, ForwardRangeSlider.val);
-            var coordinatesRotation = Quaternion.FromToRotation(Vector3.up, GetUpDirection());
+            var extents = new Vector3(L2RangeSlider.val, L0RangeSlider.val, L1RangeSlider.val);
+            var coordinatesRotation = Quaternion.FromToRotation(Vector3.up, GetL0Direction());
 
             var p0 = t.position + t.rotation * coordinatesRotation * new Vector3(-extents.x, -extents.y, -extents.z);
             var p1 = t.position + t.rotation * coordinatesRotation * new Vector3( extents.x,  extents.y,  extents.z);
@@ -156,23 +156,23 @@ namespace BusDriver
         {
             var t = _originController.transform;
             var radius = 0.2f;
-            var coordinatesRotation = Quaternion.FromToRotation(Vector3.up, GetUpDirection());
+            var coordinatesRotation = Quaternion.FromToRotation(Vector3.up, GetL0Direction());
             var newUp = coordinatesRotation * t.up;
             var newRight = coordinatesRotation * t.right;
             var newForward = coordinatesRotation * t.forward;
 
-            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(-PitchRangeSlider.val, newRight) * newUp * radius, Color.red);
-            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(PitchRangeSlider.val, newRight) * newUp * radius, Color.red);
+            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(-R2RangeSlider.val, newRight) * newUp * radius, Color.red);
+            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(R2RangeSlider.val, newRight) * newUp * radius, Color.red);
 
-            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(-PitchRangeSlider.val, newUp) * newForward * radius, Color.green);
-            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(PitchRangeSlider.val, newUp) * newForward * radius, Color.green);
+            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(-R2RangeSlider.val, newUp) * newForward * radius, Color.green);
+            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(R2RangeSlider.val, newUp) * newForward * radius, Color.green);
 
-            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(-PitchRangeSlider.val, newForward) * newUp * radius, Color.blue);
-            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(PitchRangeSlider.val, newForward) * newUp * radius, Color.blue);
+            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(-R2RangeSlider.val, newForward) * newUp * radius, Color.blue);
+            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(R2RangeSlider.val, newForward) * newUp * radius, Color.blue);
 
-            _originDrawer.PushArc(t.position, newRight, newUp, radius, -PitchRangeSlider.val, PitchRangeSlider.val, Color.red);
-            _originDrawer.PushArc(t.position, newUp, newForward, radius, -YawRangeSlider.val, YawRangeSlider.val, Color.green);
-            _originDrawer.PushArc(t.position, newForward, newUp, radius, -RollRangeSlider.val, RollRangeSlider.val, Color.blue);
+            _originDrawer.PushArc(t.position, newRight, newUp, radius, -R2RangeSlider.val, R2RangeSlider.val, Color.red);
+            _originDrawer.PushArc(t.position, newUp, newForward, radius, -R0RangeSlider.val, R0RangeSlider.val, Color.green);
+            _originDrawer.PushArc(t.position, newForward, newUp, radius, -R1RangeSlider.val, R1RangeSlider.val, Color.blue);
         }
 
         protected void Update()
@@ -195,12 +195,12 @@ namespace BusDriver
             _originDrawer.Draw(_originMaterial);
 
             _valuesSourceReportBuilder.Length = 0;
-            _valuesSourceReportBuilder.Append("Up:      ").AppendFormat("{0:F3}", _valuesSource?.GetValue(DeviceAxis.L0) ?? float.NaN).AppendLine()
-                                            .Append("Right:   ").AppendFormat("{0:F3}", _valuesSource?.GetValue(DeviceAxis.L1) ?? float.NaN).AppendLine()
-                                            .Append("Forward: ").AppendFormat("{0:F3}", _valuesSource?.GetValue(DeviceAxis.L2) ?? float.NaN).AppendLine()
-                                            .Append("Yaw:     ").AppendFormat("{0:F3}", _valuesSource?.GetValue(DeviceAxis.R0) ?? float.NaN).AppendLine()
-                                            .Append("Pitch:   ").AppendFormat("{0:F3}", _valuesSource?.GetValue(DeviceAxis.R1) ?? float.NaN).AppendLine()
-                                            .Append("Roll:    ").AppendFormat("{0:F3}", _valuesSource?.GetValue(DeviceAxis.R2) ?? float.NaN).AppendLine();
+            _valuesSourceReportBuilder.Append("L0\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.L0) ?? float.NaN).AppendLine()
+                                      .Append("L1\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.L1) ?? float.NaN).AppendLine()
+                                      .Append("L2\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.L2) ?? float.NaN).AppendLine()
+                                      .Append("R0\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.R0) ?? float.NaN).AppendLine()
+                                      .Append("R1\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.R1) ?? float.NaN).AppendLine()
+                                      .Append("R2\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.R2) ?? float.NaN).AppendLine();
 
             ValuesSourceReportText.val = _valuesSourceReportBuilder.ToString();
 
@@ -231,14 +231,14 @@ namespace BusDriver
 
                 if (!SuperController.singleton.freezeAnimation && _valuesSource != null && _motionTarget != null)
                 {
-                    var upValue = UpRangeSlider.val * (_valuesSource.GetValue(DeviceAxis.L0) - DeviceAxis.DefaultValue(DeviceAxis.L0)) * 2;
-                    var rightValue = RightRangeSlider.val * (_valuesSource.GetValue(DeviceAxis.L1) - DeviceAxis.DefaultValue(DeviceAxis.L1)) * 2;
-                    var forwardValue = ForwardRangeSlider.val * (_valuesSource.GetValue(DeviceAxis.L2) - DeviceAxis.DefaultValue(DeviceAxis.L2)) * 2;
-                    var yawValue = YawRangeSlider.val * (_valuesSource.GetValue(DeviceAxis.R0) - DeviceAxis.DefaultValue(DeviceAxis.R0)) * 2;
-                    var rollValue = RollRangeSlider.val * (_valuesSource.GetValue(DeviceAxis.R1) - DeviceAxis.DefaultValue(DeviceAxis.R1)) * 2;
-                    var pitchValue = PitchRangeSlider.val * (_valuesSource.GetValue(DeviceAxis.R2) - DeviceAxis.DefaultValue(DeviceAxis.R2)) * 2;
+                    var upValue = L0RangeSlider.val *           (_valuesSource.GetValue(DeviceAxis.L0) - DeviceAxis.DefaultValue(DeviceAxis.L0)) * 2;
+                    var forwardValue = L1RangeSlider.val * (_valuesSource.GetValue(DeviceAxis.L1) - DeviceAxis.DefaultValue(DeviceAxis.L1)) * 2;
+                    var rightValue = L2RangeSlider.val *     (_valuesSource.GetValue(DeviceAxis.L2) - DeviceAxis.DefaultValue(DeviceAxis.L2)) * 2;
+                    var yawValue = R0RangeSlider.val *         (_valuesSource.GetValue(DeviceAxis.R0) - DeviceAxis.DefaultValue(DeviceAxis.R0)) * 2;
+                    var rollValue = R1RangeSlider.val *       (_valuesSource.GetValue(DeviceAxis.R1) - DeviceAxis.DefaultValue(DeviceAxis.R1)) * 2;
+                    var pitchValue = R2RangeSlider.val *     (_valuesSource.GetValue(DeviceAxis.R2) - DeviceAxis.DefaultValue(DeviceAxis.R2)) * 2;
 
-                    var coordinatesRotation = Quaternion.FromToRotation(Vector3.up, GetUpDirection());
+                    var coordinatesRotation = Quaternion.FromToRotation(Vector3.up, GetL0Direction());
                     var rotation = Quaternion.Euler(coordinatesRotation * new Vector3(pitchValue, yawValue, rollValue));
                     var offset = coordinatesRotation * new Vector3(rightValue, upValue, forwardValue);
 
@@ -256,14 +256,14 @@ namespace BusDriver
             _physicsIteration++;
         }
 
-        private Vector3 GetUpDirection()
+        private Vector3 GetL0Direction()
         {
-            if (UpDirectionChooser.val == "+Up") return Vector3.up;
-            else if (UpDirectionChooser.val == "+Right") return Vector3.right;
-            else if (UpDirectionChooser.val == "+Forward") return Vector3.forward;
-            else if (UpDirectionChooser.val == "-Up") return -Vector3.up;
-            else if (UpDirectionChooser.val == "-Right") return -Vector3.right;
-            else if (UpDirectionChooser.val == "-Forward") return -Vector3.forward;
+            if (L0DirectionChooser.val == "+Up") return Vector3.up;
+            else if (L0DirectionChooser.val == "+Right") return Vector3.right;
+            else if (L0DirectionChooser.val == "+Forward") return Vector3.forward;
+            else if (L0DirectionChooser.val == "-Up") return -Vector3.up;
+            else if (L0DirectionChooser.val == "-Right") return -Vector3.right;
+            else if (L0DirectionChooser.val == "-Forward") return -Vector3.forward;
             return Vector3.zero;
         }
 
