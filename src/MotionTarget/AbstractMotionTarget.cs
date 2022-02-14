@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Linq;
 using BusDriver.UI;
+using MeshVR;
 using UnityEngine;
 
 namespace BusDriver.MotionTarget
@@ -47,20 +48,46 @@ namespace BusDriver.MotionTarget
             AtomChooserCallback(defaultPerson);
         }
 
-        protected virtual void AtomChooserCallback(string s)
+        private void AddPoseListener()
         {
-            Atom = SuperController.singleton.GetAtomByUid(s);
-            AtomChooser.valNoCallback = Atom == null ? "None" : s;
+            if (Atom == null)
+                return;
+
+            var posePresetsManagerControl = Atom.presetManagerControls.First(c => c.name == "PosePresets");
+            var posePresetsManager = posePresetsManagerControl.GetComponent<PresetManager>();
+            posePresetsManager.postLoadEvent.AddListener(PosePostLoadCallback);
         }
 
+        private void RemovePoseListener()
+        {
+            if (Atom == null)
+                return;
+
+            var posePresetsManagerControl = Atom.presetManagerControls.First(c => c.name == "PosePresets");
+            var posePresetsManager = posePresetsManagerControl.GetComponent<PresetManager>();
+            posePresetsManager.postLoadEvent.RemoveListener(PosePostLoadCallback);
+        }
+
+        protected virtual void AtomChooserCallback(string s)
+        {
+            RemovePoseListener();
+            Atom = SuperController.singleton.GetAtomByUid(s);
+            AtomChooser.valNoCallback = Atom == null ? "None" : s;
+            AddPoseListener();
+        }
+
+        protected abstract void PosePostLoadCallback();
         protected abstract void ResetOriginCallback();
 
-        protected virtual void Dispose(bool disposing) { }
+        protected virtual void Dispose(bool disposing)
+        {
+            RemovePoseListener();
+        }
 
         public void Dispose()
         {
             Dispose(disposing: true);
-            System.GC.SuppressFinalize(this);
+            GC.SuppressFinalize(this);
         }
     }
 }

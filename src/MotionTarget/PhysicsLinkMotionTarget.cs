@@ -1,4 +1,4 @@
-﻿using DebugUtils;
+using DebugUtils;
 using Leap.Unity;
 using Leap.Unity.Infix;
 using System.Collections.Generic;
@@ -8,6 +8,7 @@ using BusDriver.Utils;
 using UnityEngine;
 using UnityThreading;
 using System;
+using System.Collections;
 
 namespace BusDriver.MotionTarget
 {
@@ -23,7 +24,7 @@ namespace BusDriver.MotionTarget
 
         public PhysicsLinkMotionTarget()
         {
-            _source = new GameObject("PhysicsLinkSource", typeof(Atom), typeof(FreeControllerV3), typeof(Rigidbody));
+            _source = new GameObject("_BusDriverPhysicsLinkSource", typeof(Atom), typeof(FreeControllerV3), typeof(Rigidbody));
             _sourceRigidBody = _source.GetComponent<Rigidbody>();
             _sourceRigidBody.isKinematic = true;
             _sourceRigidBody.detectCollisions = false;
@@ -52,7 +53,7 @@ namespace BusDriver.MotionTarget
 
             _sourceRigidBody.MovePosition(sourcePosition);
             _sourceRigidBody.MoveRotation(sourceRotation);
-
+            
             DebugDraw.DrawTransform(_target.transform, 3);
             DebugDraw.DrawTransform(sourcePosition, sourceRotation.GetUp(), sourceRotation.GetRight(), sourceRotation.GetForward(), 3);
         }
@@ -111,7 +112,6 @@ namespace BusDriver.MotionTarget
                 motion.suspendRotationPlayback = false;
             }
 
-            _target = null;
         }
 
         private void CaptureCurrentTarget()
@@ -131,11 +131,8 @@ namespace BusDriver.MotionTarget
             }
         }
 
-        protected void TargetChooserCallback(string s)
+        private void MoveOriginAndSourceToTarget()
         {
-            ResetCurrentTarget();
-
-            _target = Atom?.freeControllers?.FirstOrDefault(c => string.Equals(s, c.name, StringComparison.OrdinalIgnoreCase));
             ResetOriginCallback();
 
             if (_target != null)
@@ -143,10 +140,31 @@ namespace BusDriver.MotionTarget
                 _source.transform.position = _target.transform.position;
                 _source.transform.rotation = _target.transform.rotation;
             }
+        }
 
+        protected void TargetChooserCallback(string s)
+        {
+            ResetCurrentTarget();
+            _target = Atom?.freeControllers?.FirstOrDefault(c => string.Equals(s, c.name, StringComparison.OrdinalIgnoreCase));
+            MoveOriginAndSourceToTarget();
             CaptureCurrentTarget();
 
             TargetChooser.valNoCallback = _target == null ? "None" : s;
+        }
+
+        protected override void PosePostLoadCallback()
+        {
+            ResetCurrentTarget();
+            SuperController.singleton.StartCoroutine(PosePostLoadCoroutine());
+        }
+
+        private IEnumerator PosePostLoadCoroutine()
+        {
+            for(var i = 0; i < 10; i++)
+                yield return new WaitForEndOfFrame();
+
+            MoveOriginAndSourceToTarget();
+            CaptureCurrentTarget();
         }
 
         protected override void ResetOriginCallback()
@@ -157,7 +175,10 @@ namespace BusDriver.MotionTarget
 
         protected override void Dispose(bool disposing)
         {
+            base.Dispose(disposing);
+
             ResetCurrentTarget();
+            _target = null;
 
             if(_source != null)
                 GameObject.Destroy(_source);

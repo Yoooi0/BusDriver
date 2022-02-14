@@ -7,12 +7,14 @@ using BusDriver.UI;
 using BusDriver.Utils;
 using UnityEngine;
 using System;
+using System.Collections;
 
 namespace BusDriver.MotionTarget
 {
     public class ForceMotionTarget : AbstractMotionTarget
     {
         private Rigidbody _target;
+        private bool _updateTarget = true;
 
         private JSONStorableStringChooser TargetChooser;
 
@@ -32,6 +34,8 @@ namespace BusDriver.MotionTarget
 
         public override void Apply(Transform origin, Vector3 offset, Quaternion rotation)
         {
+            if (!_updateTarget)
+                return;
             if (_target == null || origin == null)
                 return;
 
@@ -102,6 +106,21 @@ namespace BusDriver.MotionTarget
             _target = Atom?.forceReceivers?.FirstOrDefault(c => string.Equals(s, c.name, StringComparison.OrdinalIgnoreCase))?.GetComponent<Rigidbody>();
             ResetOriginCallback();
             TargetChooser.valNoCallback = _target == null ? "None" : s;
+        }
+
+        protected override void PosePostLoadCallback()
+        {
+            SuperController.singleton.StartCoroutine(PosePostLoadCoroutine());
+        }
+
+        private IEnumerator PosePostLoadCoroutine()
+        {
+            _updateTarget = false;
+            for (var i = 0; i < 10; i++)
+                yield return new WaitForEndOfFrame();
+
+            ResetOriginCallback();
+            _updateTarget = true;
         }
 
         protected override void ResetOriginCallback()
