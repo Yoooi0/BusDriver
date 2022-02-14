@@ -33,13 +33,21 @@ namespace BusDriver
             yield return new WaitUntil(() => !SuperController.singleton.isLoading);
 
             const string originUid = "_BusDriverOrigin";
-            yield return StartCoroutine(SuperController.singleton.AddAtomByType("Empty", originUid, userInvoked: false));
             _origin = SuperController.singleton.GetAtoms().FirstOrDefault(a => a.uid == originUid);
+            if (_origin == null)
+            {
+                yield return StartCoroutine(SuperController.singleton.AddAtomByType("Empty", originUid, userInvoked: false));
+                _origin = SuperController.singleton.GetAtoms().FirstOrDefault(a => a.uid == originUid);
+            }
+
             _originController = _origin.GetComponentInChildren<FreeControllerV3>();
 
-            var o = _origin.GetComponentByName<Component>("rescaleObject");
-            o.transform.parent = null;
-            Destroy(o.transform.gameObject);
+            var component = _origin.GetComponentByName<Component>("rescaleObject");
+            if (component != null)
+            {
+                component.transform.parent = null;
+                Destroy(component.transform.gameObject);
+            }
         }
 
         protected virtual void Start()
