@@ -30,23 +30,21 @@ namespace BusDriver
 
         private IEnumerator SpawnOriginObject()
         {
+            yield return new WaitUntil(() => !SuperController.singleton.isLoading);
+
             const string originUid = "_BusDriverOrigin";
-            yield return StartCoroutine(SuperController.singleton.AddAtomByType("Cube", originUid, userInvoked: false));
+            yield return StartCoroutine(SuperController.singleton.AddAtomByType("Empty", originUid, userInvoked: false));
             _origin = SuperController.singleton.GetAtoms().FirstOrDefault(a => a.uid == originUid);
             _originController = _origin.GetComponentInChildren<FreeControllerV3>();
 
-            var rigidbody = _origin.GetComponentInChildren<Rigidbody>();
-            rigidbody.isKinematic = true;
-            rigidbody.detectCollisions = false;
-            rigidbody.interpolation = RigidbodyInterpolation.Interpolate;
+            var o = _origin.GetComponentByName<Component>("rescaleObject");
+            o.transform.parent = null;
+            Destroy(o.transform.gameObject);
+        }
 
-            var meshRenderer = _origin.GetComponentInChildren<MeshRenderer>();
-            meshRenderer.transform.parent = null;
-            Destroy(meshRenderer.transform.gameObject);
-
-            var meshFilter = _origin.GetComponentInChildren<MeshFilter>();
-            meshFilter.transform.parent = null;
-            Destroy(meshFilter.transform.gameObject);
+        protected virtual void Start()
+        {
+            StartCoroutine(SpawnOriginObject());
         }
 
         public override void Init()
@@ -54,7 +52,6 @@ namespace BusDriver
             base.Init();
 
             _valuesSourceReportBuilder = new StringBuilder();
-            StartCoroutine(SpawnOriginObject());
             _originDrawer = new DebugUtils.LineDrawer();
             _originMaterial = new Material(Shader.Find("Battlehub/RTGizmos/Handles"));
             _originMaterial.color = Color.white;
