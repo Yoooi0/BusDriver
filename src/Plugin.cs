@@ -157,22 +157,22 @@ namespace BusDriver
             var t = _originController.transform;
             var radius = 0.2f;
             var coordinatesRotation = Quaternion.FromToRotation(Vector3.up, GetL0Direction());
-            var newUp = coordinatesRotation * t.up;
-            var newRight = coordinatesRotation * t.right;
-            var newForward = coordinatesRotation * t.forward;
+            var newUp = t.rotation * coordinatesRotation * Vector3.up;
+            var newRight = t.rotation * coordinatesRotation * Vector3.right;
+            var newForward = t.rotation * coordinatesRotation * Vector3.forward;
+
+            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(-R0RangeSlider.val, newUp) * newForward * radius, Color.green);
+            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis( R0RangeSlider.val, newUp) * newForward * radius, Color.green);
+
+            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(-R1RangeSlider.val, newForward) * newUp * radius, Color.blue);
+            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis( R1RangeSlider.val, newForward) * newUp * radius, Color.blue);
 
             _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(-R2RangeSlider.val, newRight) * newUp * radius, Color.red);
-            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(R2RangeSlider.val, newRight) * newUp * radius, Color.red);
+            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis( R2RangeSlider.val, newRight) * newUp * radius, Color.red);
 
-            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(-R2RangeSlider.val, newUp) * newForward * radius, Color.green);
-            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(R2RangeSlider.val, newUp) * newForward * radius, Color.green);
-
-            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(-R2RangeSlider.val, newForward) * newUp * radius, Color.blue);
-            _originDrawer.PushLine(t.position, t.position + Quaternion.AngleAxis(R2RangeSlider.val, newForward) * newUp * radius, Color.blue);
-
-            _originDrawer.PushArc(t.position, newRight, newUp, radius, -R2RangeSlider.val, R2RangeSlider.val, Color.red);
             _originDrawer.PushArc(t.position, newUp, newForward, radius, -R0RangeSlider.val, R0RangeSlider.val, Color.green);
             _originDrawer.PushArc(t.position, newForward, newUp, radius, -R1RangeSlider.val, R1RangeSlider.val, Color.blue);
+            _originDrawer.PushArc(t.position, newRight, newUp, radius, -R2RangeSlider.val, R2RangeSlider.val, Color.red);
         }
 
         protected void Update()
