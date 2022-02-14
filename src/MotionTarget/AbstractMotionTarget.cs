@@ -23,7 +23,7 @@ namespace BusDriver.MotionTarget
 
         public void CreateUI(IUIBuilder builder)
         {
-            AtomChooser = builder.CreateScrollablePopup("MotionSource:Person", "Select Person", null, null, AtomChooserCallback, true);
+            AtomChooser = builder.CreateScrollablePopup("MotionTarget:Person", "Select Person", null, null, AtomChooserCallback, true);
 
             CreateCustomUI(builder);
 

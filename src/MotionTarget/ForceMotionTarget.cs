@@ -22,7 +22,7 @@ namespace BusDriver.MotionTarget
 
         protected override void CreateCustomUI(IUIBuilder builder)
         {
-            TargetChooser = builder.CreateScrollablePopup("MotionSource:Force:Target", "Select Target", null, null, TargetChooserCallback, true);
+            TargetChooser = builder.CreateScrollablePopup("MotionTarget:Force:Target", "Select Target", null, null, TargetChooserCallback, true);
             FindAtoms();
         }
 
