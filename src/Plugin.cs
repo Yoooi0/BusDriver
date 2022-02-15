@@ -200,7 +200,6 @@ namespace BusDriver
                 _originDrawer.Draw(_originMaterial);
             }
 
-
             _valuesSourceReportBuilder.Length = 0;
             _valuesSourceReportBuilder.Append("L0\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.L0) ?? float.NaN).AppendLine()
                                       .Append("L1\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.L1) ?? float.NaN).AppendLine()
@@ -293,11 +292,15 @@ namespace BusDriver
         protected void OnSceneChanging()
         {
             _motionTarget?.OnSceneChanging();
+
+            SuperController.singleton.RemoveAtom(_origin);
         }
 
         protected void OnSceneChanged()
         {
             _motionTarget?.OnSceneChanged();
+
+            StartCoroutine(SpawnOriginObject());
         }
 
         protected void OnDestroy()
