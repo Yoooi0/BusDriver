@@ -10,11 +10,12 @@ src\MotionTarget\PhysicsLinkMotionTarget.cs
 src\Plugin.UI.cs
 src\Plugin.cs
 src\UI\Control\UIHorizontalGroup.cs
-src\UI\Control\UIInputBox.cs
+src\UI\Control\UITextInput.cs
 src\UI\IUIBuilder.cs
 src\UI\IUIProvider.cs
 src\UI\UIBuilder.cs
 src\UI\UIGroup.cs
+src\UI\UIManager.cs
 src\Utils\ComponentCache.cs
 src\Utils\DeviceAxis.cs
 src\Utils\Extensions.cs

@@ -67,15 +67,22 @@ namespace BusDriver.UI
         public JSONStorableFloat CreateSlider(string paramName, string label, float startingValue, float minValue, float maxValue, bool constrain, bool interactable, bool rightSide = false, string valueFormat = "F2")
             => CreateSlider(paramName, label, startingValue, minValue, maxValue, null, constrain, interactable, rightSide, valueFormat);
 
-        public JSONStorableString CreateTextField(string paramName, string startingValue, float height, JSONStorableString.SetStringCallback callback, bool canInput = false, bool rightSide = false)
+        public JSONStorableString CreateTextField(string paramName, string startingValue, float height, JSONStorableString.SetStringCallback callback, bool rightSide = false)
         {
-            var storable = _builder.CreateTextField(paramName, startingValue, height, callback, canInput, rightSide);
+            var storable = _builder.CreateTextField(paramName, startingValue, height, callback, rightSide);
             _objects.Add(storable);
             return storable;
         }
 
-        public JSONStorableString CreateTextField(string paramName, string startingValue, float height, bool canInput = false, bool rightSide = false)
-            => CreateTextField(paramName, startingValue, height, null, canInput, rightSide);
+        public JSONStorableString CreateTextField(string paramName, string startingValue, float height, bool rightSide = false)
+            => CreateTextField(paramName, startingValue, height, null, rightSide);
+
+        public UITextInput CreateTextInput(string paramName, string label, string startingValue, float height, bool rightSide = false)
+        {
+            var o = _builder.CreateTextInput(paramName, label, startingValue, height, rightSide);
+            _objects.Add(o);
+            return o;
+        }
 
         public JSONStorableBool CreateToggle(string paramName, string label, bool startingValue, JSONStorableBool.SetBoolCallback callback, bool rightSide = false)
         {
@@ -137,7 +144,7 @@ namespace BusDriver.UI
                 else if (o is JSONStorableString) ((JSONStorableString)o).dynamicText.transform.gameObject.SetActive(visible);
                 else if (o is UIDynamicButton) ((UIDynamicButton)o).button.transform.gameObject.SetActive(visible);
                 else if (o is UIHorizontalGroup) ((UIHorizontalGroup)o).container.transform.gameObject.SetActive(visible);
-                else if (o is UIInputBox) ((UIInputBox)o).container.transform.gameObject.SetActive(visible);
+                else if (o is UITextInput) ((UITextInput)o).container.transform.gameObject.SetActive(visible);
                 else if (o is UIDynamic) ((UIDynamic)o).transform.gameObject.SetActive(visible);
             }
         }

@@ -97,14 +97,15 @@
     <Compile Include="src\MotionTarget\IMotionTarget.cs" />
     <Compile Include="src\MotionTarget\ForceMotionTarget.cs" />
     <Compile Include="src\MotionTarget\PhysicsLinkMotionTarget.cs" />
-    <Compile Include="src\UI\Control\UIInputBox.cs" />
     <Compile Include="src\UI\Control\UIHorizontalGroup.cs" />
+    <Compile Include="src\UI\Control\UITextInput.cs" />
     <Compile Include="src\UI\IUIBuilder.cs" />
     <Compile Include="src\UI\UIGroup.cs" />
     <Compile Include="src\Plugin.cs" />
     <Compile Include="src\Plugin.UI.cs" />
     <Compile Include="src\UI\IUIProvider.cs" />
     <Compile Include="src\UI\UIBuilder.cs" />
+    <Compile Include="src\UI\UIManager.cs" />
     <Compile Include="src\Utils\ComponentCache.cs" />
     <Compile Include="src\Utils\DeviceAxis.cs" />
     <Compile Include="src\Utils\Extensions.cs" />

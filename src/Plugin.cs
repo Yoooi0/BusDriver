@@ -8,6 +8,7 @@ using BusDriver.ValuesSource;
 using BusDriver.MotionTarget;
 using System.Collections;
 using UnityEngine;
+using BusDriver.UI;
 
 namespace BusDriver
 {
@@ -58,6 +59,8 @@ namespace BusDriver
         public override void Init()
         {
             base.Init();
+
+            UIManager.Initialize(this);
 
             _valuesSourceReportBuilder = new StringBuilder();
             _originDrawer = new DebugUtils.LineDrawer();

@@ -5,6 +5,7 @@ using System.Text.RegularExpressions;
 using BusDriver.Utils;
 using BusDriver.UI;
 using UnityEngine;
+using SimpleJSON;
 
 namespace BusDriver.ValuesSource
 {
@@ -134,6 +135,9 @@ namespace BusDriver.ValuesSource
         {
             builder.Destroy(StartStopButtonGroup);
         }
+
+        public virtual void RestoreConfig(JSONNode config) { }
+        public virtual void StoreConfig(JSONNode config) { }
 
         protected void StartCallback() => Start();
         protected void StopCallback() => Stop();

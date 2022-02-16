@@ -3,6 +3,8 @@ using System.Net;
 using System.Net.Sockets;
 using System.Text;
 using BusDriver.UI;
+using BusDriver.Utils;
+using SimpleJSON;
 
 namespace BusDriver.ValuesSource
 {
@@ -10,10 +12,10 @@ namespace BusDriver.ValuesSource
     {
         private readonly byte[] _readBuffer;
         private UdpClient _server;
-        private int _port = 8889;
         private EndPoint _receiveEndpoint;
 
-        private JSONStorableString PortInputBox;
+        private UITextInput PortInput;
+        private JSONStorableString PortText;
 
         public UdpValuesSource()
         {
@@ -23,20 +25,26 @@ namespace BusDriver.ValuesSource
 
         protected override void CreateCustomUI(IUIBuilder builder)
         {
-            PortInputBox = builder.CreateTextField("ValuesSource:Udp:Port", _port.ToString(), 50, s =>
-            {
-                var result = 0;
-                if (int.TryParse(s, out result))
-                    _port = result;
-                else
-                    SuperController.LogMessage($"Failed to parse port number from: {s}");
-            }, canInput: true);
+            PortInput = builder.CreateTextInput("ValuesSource:Udp:Port", "Port", "8889", 50);
+            PortText = PortInput.storable;
         }
 
         public override void DestroyUI(IUIBuilder builder)
         {
-            builder.Destroy(PortInputBox);
+            builder.Destroy(PortInput);
             base.DestroyUI(builder);
+        }
+
+        public override void RestoreConfig(JSONNode config)
+        {
+            config.Restore(PortText);
+            base.RestoreConfig(config);
+        }
+
+        public override void StoreConfig(JSONNode config)
+        {
+            config.Store(PortText);
+            base.StoreConfig(config);
         }
 
         protected override void Start()
@@ -44,20 +52,27 @@ namespace BusDriver.ValuesSource
             if (_server != null)
                 return;
 
+            var port = 0;
+            if (!int.TryParse(PortText.val, out port))
+            {
+                SuperController.LogMessage($"Failed to parse port number from: {PortText.val}");
+                return;
+            }
+
             try
             {
                 _server = new UdpClient();
                 _server.ExclusiveAddressUse = false;
                 _server.Client.Blocking = false;
                 _server.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                _server.Client.Bind(new IPEndPoint(IPAddress.Loopback, _port));
+                _server.Client.Bind(new IPEndPoint(IPAddress.Loopback, port));
             }
             catch(Exception e)
             {
                 SuperController.LogError(e.ToString());
             }
 
-            SuperController.LogMessage($"Upd started on port: {_port}");
+            SuperController.LogMessage($"Upd started on port: {port}");
         }
 
         protected override void Stop()

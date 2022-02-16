@@ -81,25 +81,25 @@ namespace BusDriver.UI
         public JSONStorableFloat CreateSlider(string paramName, string label, float startingValue, float minValue, float maxValue, bool constrain, bool interactable, bool rightSide = false,string valueFormat = "F2")
             => CreateSlider(paramName, label, startingValue, minValue, maxValue, null, constrain, interactable, rightSide);
 
-        public JSONStorableString CreateTextField(string paramName, string startingValue, float height, JSONStorableString.SetStringCallback callback, bool canInput = false, bool rightSide = false)
+        public JSONStorableString CreateTextField(string paramName, string startingValue, float height, JSONStorableString.SetStringCallback callback, bool rightSide = false)
         {
             var storable = new JSONStorableString(paramName, startingValue, callback);
-            var textField = Plugin.CreateTextField(storable, rightSide);
-            textField.height = height;
-
-            if (canInput)
-            {
-                var input = textField.gameObject.AddComponent<InputField>();
-                input.textComponent = textField.UItext;
-                input.lineType = InputField.LineType.SingleLine;
-                storable.inputField = input;
-            }
+            var textField = UIManager.CreateTextField(storable, rightSide);
+            var layoutElement = textField.gameObject.GetComponent<LayoutElement>();
+            layoutElement.minHeight = height;
+            layoutElement.preferredHeight = height;
 
             return storable;
         }
 
-        public JSONStorableString CreateTextField(string paramName, string startingValue, float height, bool rightSide = false, bool canInput = false)
-            => CreateTextField(paramName, startingValue, height, null, rightSide, canInput);
+        public JSONStorableString CreateTextField(string paramName, string startingValue, float height, bool rightSide = false)
+            => CreateTextField(paramName, startingValue, height, null, rightSide);
+
+        public UITextInput CreateTextInput(string paramName, string label, string startingValue, float height, bool rightSide = false)
+        {
+            var container = CreateSpacer(height, rightSide);
+            return new UITextInput(container, height, label, paramName, startingValue);
+        }
 
         public JSONStorableBool CreateToggle(string paramName, string label, bool startingValue, JSONStorableBool.SetBoolCallback callback, bool rightSide = false)
         {
@@ -138,7 +138,7 @@ namespace BusDriver.UI
             else if (o is JSONStorableString) Plugin.RemoveTextField((JSONStorableString)o);
             else if (o is UIDynamicButton) Plugin.RemoveButton((UIDynamicButton)o);
             else if (o is UIHorizontalGroup) Plugin.RemoveSpacer(((UIHorizontalGroup)o).container);
-            else if (o is UIInputBox) Plugin.RemoveSpacer(((UIInputBox)o).container);
+            else if (o is UITextInput) UIManager.RemoveSpacer(((UITextInput)o).container);
             else if (o is UIDynamic) Plugin.RemoveSpacer((UIDynamic)o);
         }
     }
