@@ -14,6 +14,8 @@ namespace BusDriver.UI
         private readonly List<object> _objects;
         private readonly List<string> _storableBlacklist;
 
+        public bool IsVisible { get; private set; } = true;
+
         public UIGroup(IUIBuilder builder)
         {
             _builder = builder;
@@ -122,6 +124,11 @@ namespace BusDriver.UI
 
         public void SetVisible(bool visible)
         {
+            var group = _builder as UIGroup;
+            if (group != null && !group.IsVisible)
+                visible = false;
+
+            IsVisible = visible;
             foreach (var o in _objects)
             {
                 if (o is JSONStorableStringChooser) ((JSONStorableStringChooser)o).popup.transform.gameObject.SetActive(visible);
