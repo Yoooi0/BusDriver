@@ -1,7 +1,9 @@
-﻿using System;
+using System;
 using System.Linq;
 using BusDriver.UI;
+using BusDriver.Utils;
 using MeshVR;
+using SimpleJSON;
 using UnityEngine;
 
 namespace BusDriver.MotionTarget
@@ -36,16 +38,28 @@ namespace BusDriver.MotionTarget
             builder.Destroy(ResetOriginButton);
         }
 
-        protected void FindAtoms()
+        public virtual void RestoreConfig(JSONNode config)
+        {
+            config.Store(AtomChooser);
+            FindAtoms(AtomChooser.val);
+        }
+
+        public virtual void StoreConfig(JSONNode config)
+        {
+            config.Restore(AtomChooser);
+        }
+
+        protected void FindAtoms(string defaultUid = null)
         {
             var people = SuperController.singleton.GetAtoms().Where(a => a.type == "Person");
             var atoms = people.Select(a => a.uid).ToList();
 
-            var defaultPerson = atoms.FirstOrDefault(uid => uid == Atom?.uid) ?? atoms.FirstOrDefault() ?? "None";
+            if (!atoms.Contains(defaultUid))
+                defaultUid = atoms.FirstOrDefault(uid => uid == Atom?.uid) ?? atoms.FirstOrDefault() ?? "None";
             atoms.Insert(0, "None");
 
             AtomChooser.choices = atoms;
-            AtomChooserCallback(defaultPerson);
+            AtomChooserCallback(defaultUid);
         }
 
         private void AddPoseListener()

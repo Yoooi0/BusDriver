@@ -9,6 +9,7 @@ using UnityEngine;
 using UnityThreading;
 using System;
 using System.Collections;
+using SimpleJSON;
 
 namespace BusDriver.MotionTarget
 {
@@ -39,8 +40,21 @@ namespace BusDriver.MotionTarget
 
         public override void DestroyUI(IUIBuilder builder)
         {
-            base.DestroyUI(builder);
             builder.Destroy(TargetChooser);
+            base.DestroyUI(builder);
+        }
+
+        public override void RestoreConfig(JSONNode config)
+        {
+            base.RestoreConfig(config);
+            config.Restore(TargetChooser);
+            FindTargets(TargetChooser.val);
+        }
+
+        public override void StoreConfig(JSONNode config)
+        {
+            base.StoreConfig(config);
+            config.Store(TargetChooser);
         }
 
         public override void Apply(Transform origin, Vector3 offset, Quaternion rotation)
