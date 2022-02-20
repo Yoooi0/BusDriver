@@ -37,14 +37,14 @@ namespace BusDriver.ValuesSource
 
         public override void RestoreConfig(JSONNode config)
         {
-            config.Restore(PortText);
             base.RestoreConfig(config);
+            config.Restore(PortText);
         }
 
         public override void StoreConfig(JSONNode config)
         {
-            config.Store(PortText);
             base.StoreConfig(config);
+            config.Store(PortText);
         }
 
         protected override void Start()

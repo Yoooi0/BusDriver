@@ -78,8 +78,8 @@ namespace BusDriver.UI
             return storable;
         }
 
-        public JSONStorableFloat CreateSlider(string paramName, string label, float startingValue, float minValue, float maxValue, bool constrain, bool interactable, bool rightSide = false,string valueFormat = "F2")
-            => CreateSlider(paramName, label, startingValue, minValue, maxValue, null, constrain, interactable, rightSide);
+        public JSONStorableFloat CreateSlider(string paramName, string label, float startingValue, float minValue, float maxValue, bool constrain, bool interactable, bool rightSide = false, string valueFormat = "F2")
+            => CreateSlider(paramName, label, startingValue, minValue, maxValue, null, constrain, interactable, rightSide, valueFormat);
 
         public JSONStorableString CreateTextField(string paramName, string startingValue, float height, JSONStorableString.SetStringCallback callback, bool rightSide = false)
         {
