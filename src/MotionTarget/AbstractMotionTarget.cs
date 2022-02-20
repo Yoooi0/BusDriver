@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Linq;
 using BusDriver.UI;
 using BusDriver.Utils;
@@ -15,21 +15,24 @@ namespace BusDriver.MotionTarget
         private JSONStorableStringChooser AtomChooser;
         private UIDynamicButton ResetOriginButton;
 
-        public abstract event EventHandler<TargetChangedEventArgs> TargetChanged;
+        public abstract event EventHandler<TransformEventArgs> OriginReset;
 
         public abstract void Apply(Transform origin, Vector3 offset, Quaternion rotation);
+        public abstract void ResetOrigin();
+        protected abstract void PosePostLoadCallback();
+
         public virtual void OnSceneChanged() { }
         public virtual void OnSceneChanging() { }
 
         protected virtual void CreateCustomUI(IUIBuilder builder) { }
-
+        
         public void CreateUI(IUIBuilder builder)
         {
             AtomChooser = builder.CreateScrollablePopup("MotionTarget:Person", "Select Person", null, null, AtomChooserCallback, true);
 
             CreateCustomUI(builder);
 
-            ResetOriginButton = builder.CreateButton("Reset origin", ResetOriginCallback, true);
+            ResetOriginButton = builder.CreateButton("Reset origin", ResetOrigin, true);
         }
 
         public virtual void DestroyUI(IUIBuilder builder)
@@ -90,8 +93,7 @@ namespace BusDriver.MotionTarget
             AddPoseListener();
         }
 
-        protected abstract void PosePostLoadCallback();
-        protected abstract void ResetOriginCallback();
+
 
         protected virtual void Dispose(bool disposing)
         {

@@ -152,7 +152,7 @@ namespace BusDriver
         {
             if (_motionTarget != null)
             {
-                _motionTarget.TargetChanged -= OnTargetChanged;
+                _motionTarget.OriginReset -= OnOriginReset;
                 _motionTarget.DestroyUI(_motionTargetGroup);
                 _motionTarget.Dispose();
                 _motionTarget = null;
@@ -170,7 +170,7 @@ namespace BusDriver
             }
 
             MotionTargetChooser.valNoCallback = s;
-            _motionTarget.TargetChanged += OnTargetChanged;
+            _motionTarget.OriginReset += OnOriginReset;
             _motionTarget.CreateUI(_motionTargetGroup);
         }
 

@@ -1,14 +1,14 @@
-using System;
+﻿using System;
 using BusDriver.Config;
 using BusDriver.UI;
 using UnityEngine;
 
 namespace BusDriver.MotionTarget
 {
-    public class TargetChangedEventArgs : EventArgs
+    public class TransformEventArgs : EventArgs
     {
         public Transform Transform { get; set; }
-        public TargetChangedEventArgs(Transform transform)
+        public TransformEventArgs(Transform transform)
         {
             Transform = transform;
         }
@@ -16,9 +16,10 @@ namespace BusDriver.MotionTarget
 
     public interface IMotionTarget : IUIProvider, IConfigProvider, IDisposable
     {
-        event EventHandler<TargetChangedEventArgs> TargetChanged;
+        event EventHandler<TransformEventArgs> OriginReset;
 
         void Apply(Transform origin, Vector3 offset, Quaternion rotation);
+        void ResetOrigin();
         void OnSceneChanging();
         void OnSceneChanged();
     }

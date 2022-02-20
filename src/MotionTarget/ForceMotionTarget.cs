@@ -1,4 +1,4 @@
-using DebugUtils;
+﻿using DebugUtils;
 using Leap.Unity;
 using Leap.Unity.Infix;
 using System.Collections.Generic;
@@ -19,7 +19,7 @@ namespace BusDriver.MotionTarget
 
         private JSONStorableStringChooser TargetChooser;
 
-        public override event EventHandler<TargetChangedEventArgs> TargetChanged;
+        public override event EventHandler<TransformEventArgs> OriginReset;
 
         protected override void CreateCustomUI(IUIBuilder builder)
         {
@@ -118,7 +118,7 @@ namespace BusDriver.MotionTarget
         protected void TargetChooserCallback(string s)
         {
             _target = Atom?.forceReceivers?.FirstOrDefault(c => string.Equals(s, c.name, StringComparison.OrdinalIgnoreCase))?.GetComponent<Rigidbody>();
-            ResetOriginCallback();
+            ResetOrigin();
             TargetChooser.valNoCallback = _target == null ? "None" : s;
         }
 
@@ -133,14 +133,14 @@ namespace BusDriver.MotionTarget
             for (var i = 0; i < 10; i++)
                 yield return new WaitForEndOfFrame();
 
-            ResetOriginCallback();
+            ResetOrigin();
             _updateTarget = true;
         }
 
-        protected override void ResetOriginCallback()
+        public override void ResetOrigin()
         {
-            if (TargetChanged != null)
-                TargetChanged(this, new TargetChangedEventArgs(_target?.transform));
+            if (OriginReset != null)
+                OriginReset(this, new TransformEventArgs(_target?.transform));
         }
     }
 }

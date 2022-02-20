@@ -21,7 +21,7 @@ namespace BusDriver.MotionTarget
 
         private JSONStorableStringChooser TargetChooser;
 
-        public override event EventHandler<TargetChangedEventArgs> TargetChanged;
+        public override event EventHandler<TransformEventArgs> OriginReset;
 
         public PhysicsLinkMotionTarget()
         {
@@ -147,7 +147,7 @@ namespace BusDriver.MotionTarget
 
         private void MoveOriginAndSourceToTarget()
         {
-            ResetOriginCallback();
+            ResetOrigin();
 
             if (_target != null)
             {
@@ -181,10 +181,10 @@ namespace BusDriver.MotionTarget
             CaptureCurrentTarget();
         }
 
-        protected override void ResetOriginCallback()
+        public override void ResetOrigin()
         {
-            if (TargetChanged != null)
-                TargetChanged(this, new TargetChangedEventArgs(_target?.transform));
+            if (OriginReset != null)
+                OriginReset(this, new TransformEventArgs(_target?.transform));
         }
 
         protected override void Dispose(bool disposing)

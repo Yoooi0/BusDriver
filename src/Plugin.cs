@@ -49,6 +49,8 @@ namespace BusDriver
                 component.transform.parent = null;
                 Destroy(component.transform.gameObject);
             }
+
+            OnOriginLoaded();
         }
 
         protected virtual void Start()
@@ -283,7 +285,8 @@ namespace BusDriver
             return Vector3.zero;
         }
 
-        private void OnTargetChanged(object sender, TargetChangedEventArgs e)
+        private void OnOriginLoaded() => _motionTarget?.ResetOrigin();
+        private void OnOriginReset(object sender, TransformEventArgs e)
         {
             if (_originController == null || e.Transform == null)
                 return;
