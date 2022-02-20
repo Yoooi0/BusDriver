@@ -14,6 +14,7 @@ namespace BusDriver.MotionTarget
 
         private JSONStorableStringChooser AtomChooser;
         private UIDynamicButton ResetOriginButton;
+        private UIDynamicButton RefreshButton;
 
         public abstract event EventHandler<TransformEventArgs> OriginReset;
 
@@ -32,13 +33,17 @@ namespace BusDriver.MotionTarget
 
             CreateCustomUI(builder);
 
-            ResetOriginButton = builder.CreateButton("Reset origin", ResetOrigin, true);
+            ResetOriginButton = builder.CreateButton("Reset origin", ResetOrigin, true); 
+            RefreshButton = builder.CreateButton("Refresh", RefreshButtonCallback, true);
+            RefreshButton.buttonColor = new Color(0, 0.75f, 1f) * 0.8f;
+            RefreshButton.textColor = Color.white;
         }
 
         public virtual void DestroyUI(IUIBuilder builder)
         {
             builder.Destroy(AtomChooser);
             builder.Destroy(ResetOriginButton);
+            builder.Destroy(RefreshButton);
         }
 
         public virtual void RestoreConfig(JSONNode config)
@@ -51,6 +56,8 @@ namespace BusDriver.MotionTarget
         {
             config.Restore(AtomChooser);
         }
+
+        protected virtual void RefreshButtonCallback() => FindAtoms(AtomChooser.val);
 
         protected void FindAtoms(string defaultUid = null)
         {
