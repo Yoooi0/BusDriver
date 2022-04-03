@@ -96,8 +96,9 @@ namespace BusDriver.MotionTarget
 
         protected override void RefreshButtonCallback()
         {
+            var lastTarget = TargetChooser.val;
             base.RefreshButtonCallback();
-            FindTargets(TargetChooser.val);
+            FindTargets(lastTarget);
         }
 
         private void FindTargets(string defaultTarget = "None")
