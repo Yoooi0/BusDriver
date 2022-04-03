@@ -100,8 +100,6 @@ namespace BusDriver.MotionTarget
             AddPoseListener();
         }
 
-
-
         protected virtual void Dispose(bool disposing)
         {
             RemovePoseListener();
