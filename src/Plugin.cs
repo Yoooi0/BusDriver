@@ -43,12 +43,8 @@ namespace BusDriver
 
             _originController = _origin.GetComponentInChildren<FreeControllerV3>();
 
-            var component = _origin.GetComponentByName<Component>("rescaleObject");
-            if (component != null)
-            {
-                component.transform.parent = null;
-                Destroy(component.transform.gameObject);
-            }
+            var component = _origin.GetComponentByName<MaterialOptions>("rescaleObject");
+            component.GetMesh().Clear();
 
             OnOriginLoaded();
         }
