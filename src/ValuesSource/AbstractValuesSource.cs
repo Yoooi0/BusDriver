@@ -78,7 +78,7 @@ namespace BusDriver.ValuesSource
                     transition.StartTime = Time.fixedTime;
                     transition.EndValue = value;
 
-                    if (match.Groups.Count == 5)
+                    if (match.Groups.Count == 5 && match.Groups[3].Value.Length > 0 && match.Groups[4].Value.Length > 0)
                     {
                         var modifierName = match.Groups[3].Value.ToUpper();
                         var modifierValue = int.Parse(match.Groups[4].Value) / 1000.0f;
