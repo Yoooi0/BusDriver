@@ -16,6 +16,9 @@ namespace BusDriver.MotionTarget
         private UIDynamicButton ResetOriginButton;
         private UIDynamicButton RefreshButton;
 
+        private JSONStorableAction ResetOriginAction;
+        private JSONStorableAction RefreshAction;
+
         public abstract event EventHandler<TransformEventArgs> OriginReset;
 
         public abstract void Apply(Transform origin, Vector3 offset, Quaternion rotation);
@@ -37,6 +40,9 @@ namespace BusDriver.MotionTarget
             RefreshButton = builder.CreateButton("Refresh", RefreshButtonCallback, true);
             RefreshButton.buttonColor = new Color(0, 0.75f, 1f) * 0.8f;
             RefreshButton.textColor = Color.white;
+
+            ResetOriginAction = UIManager.CreateAction("Reset origin", ResetOrigin);
+            RefreshAction = UIManager.CreateAction("Refresh target", RefreshButtonCallback);
         }
 
         public virtual void DestroyUI(IUIBuilder builder)
@@ -44,6 +50,9 @@ namespace BusDriver.MotionTarget
             builder.Destroy(AtomChooser);
             builder.Destroy(ResetOriginButton);
             builder.Destroy(RefreshButton);
+
+            UIManager.RemoveAction(ResetOriginAction);
+            UIManager.RemoveAction(RefreshAction);
         }
 
         public virtual void RestoreConfig(JSONNode config)

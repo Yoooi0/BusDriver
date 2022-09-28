@@ -17,6 +17,9 @@ namespace BusDriver.ValuesSource
         private UITextInput PortInput;
         private JSONStorableString PortText;
 
+        private JSONStorableAction StartUdpAction;
+        private JSONStorableAction StopUdpAction;
+
         public UdpValuesSource()
         {
             _readBuffer = new byte[1024];
@@ -27,12 +30,18 @@ namespace BusDriver.ValuesSource
         {
             PortInput = builder.CreateTextInput("ValuesSource:Udp:Port", "Port", "8889", 50);
             PortText = PortInput.storable;
+
+            StartUdpAction = UIManager.CreateAction("Start Udp", Start);
+            StopUdpAction = UIManager.CreateAction("Stop Udp", Stop);
         }
 
         public override void DestroyUI(IUIBuilder builder)
         {
             builder.Destroy(PortInput);
             base.DestroyUI(builder);
+
+            UIManager.RemoveAction(StartUdpAction);
+            UIManager.RemoveAction(StopUdpAction);
         }
 
         public override void RestoreConfig(JSONNode config)
