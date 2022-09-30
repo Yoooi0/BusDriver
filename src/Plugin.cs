@@ -249,7 +249,7 @@ namespace BusDriver
 
                         var coordinatesRotation = Quaternion.FromToRotation(Vector3.up, GetL0Direction());
                         var rotation = Quaternion.Euler(coordinatesRotation * new Vector3(-pitchValue, -yawValue, rollValue));
-                        var offset = coordinatesRotation * new Vector3(-rightValue, upValue, -forwardValue);
+                        var offset = coordinatesRotation * new Vector3(rightValue, upValue, -forwardValue);
 
                         _motionTarget.Apply(_originController?.transform, offset, rotation);
                     }
