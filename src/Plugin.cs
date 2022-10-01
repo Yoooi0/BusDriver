@@ -236,7 +236,7 @@ namespace BusDriver
             {
                 _valuesSource?.Update();
 
-                if (!SuperController.singleton.freezeAnimation && _motionTarget != null)
+                if (!SuperController.singleton.freezeAnimation && _motionTarget != null && _originController != null)
                 {
                     if (_valuesSource != null)
                     {
@@ -251,11 +251,11 @@ namespace BusDriver
                         var rotation = Quaternion.Euler(coordinatesRotation * new Vector3(-pitchValue, -yawValue, rollValue));
                         var offset = coordinatesRotation * new Vector3(rightValue, upValue, -forwardValue);
 
-                        _motionTarget.Apply(_originController?.transform, offset, rotation);
+                        _motionTarget.Apply(_originController.transform, offset, rotation);
                     }
                     else
                     {
-                        _motionTarget.Apply(_originController?.transform, Vector3.zero, Quaternion.identity);
+                        _motionTarget.Apply(_originController.transform, Vector3.zero, Quaternion.identity);
                     }
                 }
             }
