@@ -66,7 +66,7 @@ namespace BusDriver
             defaultButton.textColor = Color.white;
             defaultButton.button.onClick.AddListener(SaveDefaultConfigCallback);
 
-            DebugDrawEnableToggle = _group.CreateToggle("Plugin:DebugDrawEnable", "Enable Debug", false);
+            DebugDrawEnableToggle = _group.CreateToggle("Plugin:DebugDrawEnable", "Enable Debug", false, _ => ValuesSourceReportText.val = string.Empty);
 
             var rangeVisible = false;
             var rangeGroup = new UIGroup(_group);

@@ -216,15 +216,18 @@ namespace BusDriver
                 _originDrawer.UpdateAndDraw(_originMaterial);
             }
 
-            _valuesSourceReportBuilder.Length = 0;
-            _valuesSourceReportBuilder.Append("L0\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.L0) ?? float.NaN).AppendLine()
-                                      .Append("L1\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.L1) ?? float.NaN).AppendLine()
-                                      .Append("L2\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.L2) ?? float.NaN).AppendLine()
-                                      .Append("R0\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.R0) ?? float.NaN).AppendLine()
-                                      .Append("R1\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.R1) ?? float.NaN).AppendLine()
-                                      .Append("R2\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.R2) ?? float.NaN).AppendLine();
+            if (DebugDrawEnableToggle.val)
+            {
+                _valuesSourceReportBuilder.Length = 0;
+                _valuesSourceReportBuilder.Append("L0\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.L0) ?? float.NaN).AppendLine()
+                                          .Append("L1\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.L1) ?? float.NaN).AppendLine()
+                                          .Append("L2\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.L2) ?? float.NaN).AppendLine()
+                                          .Append("R0\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.R0) ?? float.NaN).AppendLine()
+                                          .Append("R1\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.R1) ?? float.NaN).AppendLine()
+                                          .Append("R2\t").AppendFormat("{0,5:0.000}", _valuesSource?.GetValue(DeviceAxis.R2) ?? float.NaN).AppendLine();
 
-            ValuesSourceReportText.val = _valuesSourceReportBuilder.ToString();
+                ValuesSourceReportText.val = _valuesSourceReportBuilder.ToString();
+            }
 
             DebugDraw.Draw();
             DebugDraw.Enabled = DebugDrawEnableToggle.val;
