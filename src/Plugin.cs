@@ -213,7 +213,7 @@ namespace BusDriver
                 if (DrawOriginAnglesToggle.val)
                     DrawOriginAngles();
 
-                _originDrawer.Draw(_originMaterial);
+                _originDrawer.UpdateAndDraw(_originMaterial);
             }
 
             _valuesSourceReportBuilder.Length = 0;
@@ -311,6 +311,9 @@ namespace BusDriver
             _motionTarget?.OnSceneChanging();
 
             SuperController.singleton.RemoveAtom(_origin);
+
+            DebugDraw.Reset();
+            _originDrawer?.Reset();
         }
 
         protected void OnSceneChanged()
