@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Net.Sockets;
 using System.Text;
@@ -126,15 +126,8 @@ namespace BusDriver.ValuesSource
             if (_server == null)
                 return;
 
-            try
-            {
-                ParseCommands(ReceiveLatest());
-                UpdateValues();
-            }
-            catch (SocketException e)
-            {
-                SuperController.LogError(e.ToString());
-            }
+            ParseCommands(ReceiveLatest());
+            UpdateValues();
         }
     }
 }
