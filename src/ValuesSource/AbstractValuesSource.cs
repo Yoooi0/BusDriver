@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
@@ -44,15 +44,13 @@ namespace BusDriver.ValuesSource
             return Mathf.Lerp(transition.StartValue, transition.EndValue, t);
         }
 
-        protected void UpdateValues(string data)
+        protected void UpdateValues()
         {
             foreach (var axis in DeviceAxis.Values)
                 _values[axis] = GetValue(_transitions[axis], Time.fixedTime);
-
-            ParseCommands(data);
         }
 
-        private void ParseCommands(string data)
+        protected void ParseCommands(string data)
         {
             if (data == null)
                 return;
@@ -94,8 +92,6 @@ namespace BusDriver.ValuesSource
                     }
                 }
             }
-
-            return;
         }
 
         protected virtual void Dispose(bool disposing)

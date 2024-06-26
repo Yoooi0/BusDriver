@@ -128,8 +128,8 @@ namespace BusDriver.ValuesSource
 
             try
             {
-                var data = ReceiveLatest();
-                UpdateValues(data);
+                ParseCommands(ReceiveLatest());
+                UpdateValues();
             }
             catch (SocketException e)
             {
