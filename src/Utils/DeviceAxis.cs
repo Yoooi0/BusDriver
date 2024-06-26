@@ -3,7 +3,6 @@
 namespace BusDriver.Utils
 {
     // enums crash VaM
-    //TODO: rename from TCode?
     public static class DeviceAxis
     {
         public const int L0 = 0;
