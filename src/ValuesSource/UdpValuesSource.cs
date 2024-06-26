@@ -75,13 +75,14 @@ namespace BusDriver.ValuesSource
                 _server.Client.Blocking = false;
                 _server.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 _server.Client.Bind(new IPEndPoint(IPAddress.Loopback, port));
+
+                SuperController.LogMessage($"Upd started on port: {port}");
             }
             catch(Exception e)
             {
                 SuperController.LogError(e.ToString());
+                Stop();
             }
-
-            SuperController.LogMessage($"Upd started on port: {port}");
         }
 
         protected override void Stop()
@@ -89,9 +90,10 @@ namespace BusDriver.ValuesSource
             if (_server == null)
                 return;
 
-            _server.Close();
-            _server = null;
+            try { _server.Close(); }
+            catch { }
 
+            _server = null;
             SuperController.LogMessage("Upd stopped");
         }
 
