@@ -73,9 +73,9 @@ namespace BusDriver
             RangeTitle = _group.CreateButton("Range", () => rangeGroup.SetVisible(rangeVisible = !rangeVisible), new Color(0.3f, 0.3f, 0.3f), Color.white);
 
             L0DirectionChooser = rangeGroup.CreateScrollablePopup("Plugin:L0Direction", "L0 Direction", new List<string> { "+Up", "+Forward", "-Forward", "+Right", "-Up", "-Right",  }, "+Up", null);
-            L0RangeSlider = rangeGroup.CreateSlider("Plugin:L0Range", "L0 Range (+/- cm)", 0.08f, 0.01f, 0.25f, true, true, valueFormat: "P0");
-            L1RangeSlider = rangeGroup.CreateSlider("Plugin:L1Range", "L1 Range (+/- cm)", 0.05f, 0.01f, 0.25f, true, true, valueFormat: "P0");
-            L2RangeSlider = rangeGroup.CreateSlider("Plugin:L2Range", "L2 Range (+/- cm)", 0.05f, 0.01f, 0.25f, true, true, valueFormat: "P0");
+            L0RangeSlider = rangeGroup.CreateSlider("Plugin:L0Range", "L0 Range (+/- cm)", 0.08f, 0.01f, 0.5f, true, true, valueFormat: "P0");
+            L1RangeSlider = rangeGroup.CreateSlider("Plugin:L1Range", "L1 Range (+/- cm)", 0.05f, 0.01f, 0.5f, true, true, valueFormat: "P0");
+            L2RangeSlider = rangeGroup.CreateSlider("Plugin:L2Range", "L2 Range (+/- cm)", 0.05f, 0.01f, 0.5f, true, true, valueFormat: "P0");
 
             R0RangeSlider = rangeGroup.CreateSlider("Plugin:R0Range", "R0 Range (+/- deg)", 30, 1, 90, true, true, valueFormat: "F0");
             R1RangeSlider = rangeGroup.CreateSlider("Plugin:R1Range", "R1 Range (+/- deg)", 30, 1, 90, true, true, valueFormat: "F0");
