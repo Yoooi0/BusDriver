@@ -74,7 +74,7 @@ namespace BusDriver.ValuesSource
                 _server.ExclusiveAddressUse = false;
                 _server.Client.Blocking = false;
                 _server.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
-                _server.Client.Bind(new IPEndPoint(IPAddress.Loopback, port));
+                _server.Client.Bind(new IPEndPoint(IPAddress.Any, port));
 
                 SuperController.LogMessage($"Upd started on port: {port}");
             }
