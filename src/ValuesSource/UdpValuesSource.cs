@@ -10,9 +10,8 @@ namespace BusDriver.ValuesSource
 {
     public class UdpValuesSource : AbstractValuesSource
     {
-        private readonly byte[] _readBuffer;
         private UdpClient _server;
-        private EndPoint _receiveEndpoint;
+        private IPEndPoint _receiveEndpoint;
 
         private UITextInput PortInput;
         private JSONStorableString PortText;
@@ -22,7 +21,6 @@ namespace BusDriver.ValuesSource
 
         public UdpValuesSource()
         {
-            _readBuffer = new byte[1024];
             _receiveEndpoint = new IPEndPoint(IPAddress.Any, 0);
         }
 
@@ -72,9 +70,10 @@ namespace BusDriver.ValuesSource
             {
                 _server = new UdpClient();
                 _server.ExclusiveAddressUse = false;
-                _server.Client.Blocking = false;
                 _server.Client.SetSocketOption(SocketOptionLevel.Socket, SocketOptionName.ReuseAddress, true);
                 _server.Client.Bind(new IPEndPoint(IPAddress.Any, port));
+
+                _server.BeginReceive(Receive, _server);
 
                 SuperController.LogMessage($"Upd started on port: {port}");
             }
@@ -97,43 +96,21 @@ namespace BusDriver.ValuesSource
             SuperController.LogMessage("Upd stopped");
         }
 
-        private string ReceiveLatest()
+        private void Receive(IAsyncResult ar)
         {
-            var received = -1;
-            while (true)
-            {
-                try
-                {
-                    received = _server.Client.ReceiveFrom(_readBuffer, ref _receiveEndpoint);
-                    if (received <= 0)
-                        break;
-                }
-                catch (SocketException e) when (e.SocketErrorCode == SocketError.WouldBlock)
-                {
-                    break;
-                }
-            }
+            var server = (UdpClient)ar.AsyncState;
+            var bytes = server.EndReceive(ar, ref _receiveEndpoint);
+            var data = Encoding.ASCII.GetString(bytes);
 
-            if(received <= 0)
-                return null;
+            ParseCommands(data);
 
-            return Encoding.ASCII.GetString(_readBuffer, 0, received);
+            server.BeginReceive(Receive, server);
         }
 
         public override void Update()
         {
             if (_server == null)
                 return;
-
-            try
-            {
-                ParseCommands(ReceiveLatest());
-            }
-            catch (Exception e)
-            {
-                SuperController.LogError(e.ToString());
-                Stop();
-            }
 
             UpdateValues();
         }

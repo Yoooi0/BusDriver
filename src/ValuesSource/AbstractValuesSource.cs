@@ -36,12 +36,15 @@ namespace BusDriver.ValuesSource
         public float GetValue(int axis) => _values[axis];
         private float GetValue(Transition transition, float time)
         {
-            if (transition.StartTime == transition.EndTime)
-                return transition.EndValue;
+            lock (transition)
+            {
+                if (transition.StartTime == transition.EndTime)
+                    return transition.EndValue;
 
-            var clampedTime = Mathf.Clamp(time, transition.StartTime, transition.EndTime);
-            var t = Mathf.InverseLerp(transition.StartTime, transition.EndTime, clampedTime);
-            return Mathf.Lerp(transition.StartValue, transition.EndValue, t);
+                var clampedTime = Mathf.Clamp(time, transition.StartTime, transition.EndTime);
+                var t = Mathf.InverseLerp(transition.StartTime, transition.EndTime, clampedTime);
+                return Mathf.Lerp(transition.StartValue, transition.EndValue, t);
+            }
         }
 
         protected void UpdateValues()
@@ -53,6 +56,8 @@ namespace BusDriver.ValuesSource
         protected void ParseCommands(string data)
         {
             if (data == null)
+                return;
+            if (string.IsNullOrEmpty(data))
                 return;
 
             var matches = _regex.Matches(data);
@@ -72,23 +77,26 @@ namespace BusDriver.ValuesSource
                 if (DeviceAxis.TryParse(axisName, out axis))
                 {
                     var transition = _transitions[axis];
-                    transition.StartValue = GetValue(axis);
-                    transition.StartTime = Time.fixedTime;
-                    transition.EndValue = value;
-
-                    if (match.Groups.Count == 5 && match.Groups[3].Success && match.Groups[4].Success)
+                    lock (transition)
                     {
-                        var modifierName = match.Groups[3].Value.ToUpper();
-                        var modifierValue = int.Parse(match.Groups[4].Value) / 1000.0f;
+                        transition.StartValue = GetValue(axis);
+                        transition.StartTime = Time.fixedTime;
+                        transition.EndValue = value;
 
-                        if (modifierName == "I")
-                            transition.EndTime = transition.StartTime + modifierValue;
-                        else if(modifierName == "S")
-                            transition.EndTime = transition.StartTime + (transition.EndValue - transition.StartValue) / modifierValue;
-                    }
-                    else
-                    {
-                        transition.EndTime = transition.StartTime;
+                        if (match.Groups.Count == 5 && match.Groups[3].Success && match.Groups[4].Success)
+                        {
+                            var modifierName = match.Groups[3].Value.ToUpper();
+                            var modifierValue = int.Parse(match.Groups[4].Value) / 1000.0f;
+
+                            if (modifierName == "I")
+                                transition.EndTime = transition.StartTime + modifierValue;
+                            else if (modifierName == "S")
+                                transition.EndTime = transition.StartTime + (transition.EndValue - transition.StartValue) / modifierValue;
+                        }
+                        else
+                        {
+                            transition.EndTime = transition.StartTime;
+                        }
                     }
                 }
             }
