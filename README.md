@@ -12,6 +12,5 @@ BusDriver is a VaM (Virt-a-Mate) plugin that accepts motion data from various so
 
 # Features
 
-* Accepts data from UDP server
-* Supports TCode data format
+* Accepts TCode from UDP or Serial
 * Animates target using Physics Link or Force

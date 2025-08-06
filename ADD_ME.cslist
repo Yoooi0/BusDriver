@@ -22,4 +22,5 @@ src\Utils\Extensions.cs
 src\Utils\StreamReader.cs
 src\ValuesSource\AbstractValuesSource.cs
 src\ValuesSource\IValuesSource.cs
+src\ValuesSource\SerialValuesSource.cs
 src\ValuesSource\UdpValuesSource.cs

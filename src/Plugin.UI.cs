@@ -89,7 +89,7 @@ namespace BusDriver
             ValuesSourceReportText.text.font = Font.CreateDynamicFontFromOSFont("Consolas", 14);
             _group.BlacklistStorable("Values Report");
 
-            ValuesSourceChooser = _valuesSourceGroup.CreatePopup("Plugin:ValuesSource", "Select values source", new List<string> { "None", "Udp" }, "None", ValuesSourceChooserCallback);
+            ValuesSourceChooser = _valuesSourceGroup.CreatePopup("Plugin:ValuesSource", "Select values source", new List<string> { "None", "Udp", "Serial" }, "None", ValuesSourceChooserCallback);
 
             var originVisible = false;
             var originGroup = new UIGroup(_group);
@@ -182,6 +182,8 @@ namespace BusDriver
 
             if (s == "Udp")
                 _valuesSource = new UdpValuesSource();
+            else if (s == "Serial")
+                _valuesSource = new SerialValuesSource();
             else
             {
                 ValuesSourceChooser.valNoCallback = "None";
